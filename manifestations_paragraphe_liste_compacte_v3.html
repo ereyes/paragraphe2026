@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manifestations scientifiques – Paragraphe</title>
+  <style>
+    :root {
+      --maxw: 1100px;
+      --border: #e6e6e6;
+      --text: #111;
+      --muted: #666;
+      --bg: #fff;
+      --bg-soft: #fafafa;
+      --btn: #f4f4f4;
+      --btn-hover: #ededed;
+      --btn-active: #dfefff;
+      --focus: #1a73e8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+    header {
+      padding: 24px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 6px;
+      font-weight: 650;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--border);
+    }
+    .toolbar .label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--btn);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button:hover { background: var(--btn-hover); }
+    button:focus-visible {
+      outline: 3px solid rgba(26,115,232,.25);
+      outline-offset: 2px;
+      border-color: var(--focus);
+    }
+    button.active {
+      background: var(--btn-active);
+      border-color: rgba(26,115,232,.35);
+    }
+    main { padding: 0 16px 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    thead th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    tbody td {
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 14px;
+    }
+    .col-date { width: 170px; }
+    .col-title { width: auto; }
+    .col-axe { width: 130px; }
+    .col-actions { width: 88px; text-align: right; }
+    .muted { color: var(--muted); }
+    .title {
+      font-weight: 600;
+      margin: 0;
+    }
+    .details-row td {
+      background: var(--bg-soft);
+      padding-top: 0;
+    }
+    .details {
+      border-left: 3px solid var(--border);
+      padding: 10px 12px 12px;
+      margin: 0 0 8px;
+      font-size: 13px;
+    }
+    .kv {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 6px 12px;
+    }
+    .k { color: var(--muted); }
+    .v a { color: inherit; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .status {
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .error {
+      color: #b00020;
+    }
+    @media (max-width: 720px) {
+      .col-date { width: 120px; }
+      .col-axe { width: 100px; }
+      .kv {
+        grid-template-columns: 1fr;
+      }
+      .col-actions { width: 76px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Manifestations scientifiques – Paragraphe <span class="pill" id="yearPill">…</span></h1>
+      <p class="sub">Liste condensée (date, titre, axe) + bouton <strong>Infos</strong> pour afficher les détails. Source : Google Sheets (CSV publié).</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="label">Trier par :</span>
+      <button id="sortDate" class="active" type="button" aria-pressed="true">Date <span id="sortDateArrow">↑</span></button>
+      <button id="sortTitle" type="button" aria-pressed="false">Titre <span id="sortTitleArrow" class="muted"></span></button>
+      <button id="sortAxe" type="button" aria-pressed="false">Axe <span id="sortAxeArrow" class="muted"></span></button>
+    </div>
+  </div>
+
+  <main>
+    <div class="wrap">
+      <div class="status" id="status">Chargement…</div>
+
+      <table aria-label="Manifestations scientifiques">
+        <thead>
+          <tr>
+            <th class="col-date">Date</th>
+            <th class="col-title">Manifestation</th>
+            <th class="col-axe">Axe</th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <!-- rows injected here -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+<script>
+(() => {
+  const GOOGLE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5Jc2U7PmwPeB6W98TDYDTiABWCexypyDc2U7Qg-4x6xXEgiM4DMxjsqYASA2l-H7MfP-r8px0EPgl/pub?gid=0&single=true&output=csv";
+  const EMBEDDED_CSV = "ID,Ann\u00e9e,Axe / \u00e9quipe,Manifestation (nom),Type,Th\u00e9matique / titre complet,Date d\u00e9but,Date fin,Date (texte original),Horaire (si pr\u00e9cis\u00e9),Ville,Pays,Institution / lieu,Implication de Paragraphe,Partenaires / co-organisateurs,Organisateurs (personnes),Participants / intervenants,Projet / cadre,URL,Notes / statut,Source (r\u00e9ponse),Dur\u00e9e (jours)\nMPIP-2026-01,2026,MPIP,Journ\u00e9e d'\u00e9tude GER GENIC,Journ\u00e9e d'\u00e9tude,\"\u00ab \u00c9thique et formation \u00bb (GER GENIC, labellis\u00e9 SFSIC)\",2026-06-11,2026-06-11,11 juin 2026,,,France,Campus Condorcet,Co-organisation (avec le CEMTI) \u2014 sous r\u00e9serve d'accord de principe pour un petit financement,CEMTI ; GER GENIC,Or\u00e9lie (contact) ; Paragraphe ; CEMTI,,,https://genic.hypotheses.org/1137,Demande de financement envoy\u00e9e le 10/03/2026 ; accord de principe en attente.,Or\u00e9lie \u2014 Axe MPIP,1\nCITU-2026-01,2026,CITU,HIS 10,Colloque international,\u00ab Patrimoines vuln\u00e9rables et intelligence artificielle \u00bb,2026-06-18,2026-06-19,18 et 19 juin 2026,,Valenciennes,France,Universit\u00e9 Polytechnique Hauts-de-France,Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,,Axe CITU,2\nCITU-2026-02,2026,CITU,HyperUrbain.10,Colloque,\u00ab Re\u2011conception de l'institution de la ville post\u2011num\u00e9rique \u00bb,2026-10-20,2026-10-21,20 et 21 octobre 2026,,Aubervilliers / Paris,France,Campus Aubervilliers-Paris,Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,10e \u00e9dition.,Axe CITU,2\nCITU-2026-03,2026,CITU,CIDE.25,Colloque / conf\u00e9rence,\u00ab Production et circulation de l'information \u00e0 l\u2019\u00e8re de l\u2019intelligence artificielle : nouvelles pratiques et fractures \u00e9mergentes \u00bb,2026-11-26,2026-11-27,26 et 27 novembre 2026,,Dakar,S\u00e9n\u00e9gal,,Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,,Axe CITU,2\nCITU-2027-01,2027,CITU,3AI 2027,Colloque / conf\u00e9rence,\u00ab Co-agentivity and alterity in the Age of AI \u00bb,2027-02-04,2027-02-05,4 et 5 f\u00e9vrier 2027,,Barcelona,Espagne,Universitat de Barcelona (ENTI\u2011UB),Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,Hors p\u00e9rim\u00e8tre 2026 (mentionn\u00e9 dans les r\u00e9ponses).,Axe CITU,2\nDN-2026-01,2026,DN,International Web Studies 5,Conf\u00e9rence internationale,,2026-10-21,2026-10-23,Oct. 21-23 (ann\u00e9e non pr\u00e9cis\u00e9e dans la r\u00e9ponse \u2014 suppos\u00e9e 2026),,Alessandria,Italie,Universit\u00e0 del Piemonte Orientale,Chairs : Everardo Reyes ; Giancarlo Ruffo ; Mark Bernstein,,Everardo Reyes ; Giancarlo Ruffo ; Mark Bernstein,,,,Ann\u00e9e \u00e0 confirmer si n\u00e9cessaire.,Axe DN,3\nDN-2026-02,2026,DN,Interfaces et images environnementales,Journ\u00e9e d'\u00e9tude,\u00ab Interfaces et images environnementales : \u00c9cologies des donn\u00e9es et mondes num\u00e9ris\u00e9s \u00bb,2026-06-11,2026-06-11,11 juin 2026,,Tours,France,Universit\u00e9 de Tours,\"Co-organisation (PRIM, Paragraphe, MSH HE, GER Environnement)\",PRIM ; MSH HE ; GER Environnement,Federico Biggio ; Gustavo Gomez ; Everardo Reyes ; Rosa Cinelli,,,,,Axe DN,1\nDN-2026-03,2026,DN,S\u00e9minaire HERMES \u2014 s\u00e9ance,S\u00e9minaire,\u00ab Imaginaires artificiels : cr\u00e9ativit\u00e9 et recherche \u00e0 l\u2019\u00e8re de l\u2019image g\u00e9n\u00e9rative \u00bb,2026-04-24,2026-04-24,Vendredi 24 avril 2026,13h\u201315h (CET),,,,Organisation / animation (organisateurs indiqu\u00e9s),,Everardo Reyes ; Kristian Bankov ; Rosa Cinelli,Daniel Binns ; Philippe Boisnard ; Rosa Cinelli ; Boris Eldagsen,S\u00e9minaire HERMES,,Lieu non pr\u00e9cis\u00e9 dans la r\u00e9ponse (pr\u00e9sentiel / distanciel \u00e0 pr\u00e9ciser).,Axe DN,1\nDN-2026-04,2026,DN,Panel \u00ab Intersemiotic Translations in Games and XR \u00bb (AISV/IAVS),Panel / session,\"\u00ab Intersemiotic Translations in Games and XR: The Ludic Attitude Between Therapeutic Mediation, Identity Experimentation, and interreal translations \u00bb\",2026-02-09,2026-02-11,9-11 f\u00e9vrier 2026 (14e Congr\u00e8s R\u00e9gional AISV / IAVS),,S\u00e3o Paulo,Br\u00e9sil,USP (Universit\u00e9 de S\u00e3o Paulo),Co-organisation de la session/panel (avec E. D'armenio et Gustavo Moreira Kares),Univ. Lorraine (E. D'armenio) ; Univ. Tampere (Gustavo Moreira Kares),E. D'armenio ; Gustavo Moreira Kares,,14e Congr\u00e8s R\u00e9gional AISV / IAVS,,,Axe DN,3\nADN-2026-01,2026,ADN,\"Faire revue : communaut\u00e9s, infrastructures, outils\",Journ\u00e9e,\"\u00ab Faire revue : communaut\u00e9s, infrastructures, outils \u00bb\",2026-05-07,2026-05-07,7 mai 2026,,,,MSHB,Organisation / participation (dans le cadre du projet Revue 3.0),,Nicolas Sauret (contact),,Projet Revue 3.0,,Lieu (ville) \u00e0 pr\u00e9ciser.,Nicolas Sauret \u2014 Axe ADN,1\nADN-2026-02,2026,ADN,Sobri\u00e9t\u00e9 des archives num\u00e9riques (GI\u2011GIT),Journ\u00e9e d'\u00e9tude,Journ\u00e9e d\u2019\u00e9tude sur la sobri\u00e9t\u00e9 des archives num\u00e9riques,,,D\u00e9but juillet 2026 (date exacte \u00e0 pr\u00e9ciser),,Paris,France,DataLab de la BnF,Organisation dans le cadre du GI\u2011GIT,BnF (DataLab),Nicolas Sauret (contact),,GI\u2011GIT,,Date non fix\u00e9e (mention \u00ab d\u00e9but juillet \u00bb).,Nicolas Sauret \u2014 Axe ADN,\nNA-2026-01,2026,,Congr\u00e8s de la Soci\u00e9t\u00e9 Internationale d\u2019Ergologie,Congr\u00e8s,7e congr\u00e8s de la Soci\u00e9t\u00e9 Internationale d\u2019Ergologie,2026-06-04,2026-06-06,\"4, 5, 6 juin 2026\",,Paris,France,,Co-organisation avec le CRTD\u2011Cnam,CRTD\u2011Cnam,Muriel Pr\u00e9vot\u2011Carpentier (contact),,,https://ergologia.org/7emecongres/,,Muriel Pr\u00e9vot\u2011Carpentier,3\nNA-2026-02,2026,,Assises Sciences / Soci\u00e9t\u00e9 sur le travail et de l\u2019innovation,Assises,\u00ab Transformer pour prosp\u00e9rer dans un monde durable \u00bb,2026-10-07,2026-10-09,\"7, 8, 9 octobre 2026\",,Paris,France,,\"Labellis\u00e9 \u00ab Grand \u00e9v\u00e8nement Paris 8 \u00bb ; co-organisation (avec Cnam, EHESP, etc.)\",Cnam ; EHESP ; AgroSup Dijon / Institut Agro ; ANACT ; CNRS ; GIS CREAPT ; GIS Gestes ; INRAE ; Inserm ; INTEFP ; IPST ; Sciences Po Paris ; Univ. Gustave Eiffel ; Univ. de Lille ; UPEC ; Univ. de Poitiers ; etc.,Muriel Pr\u00e9vot\u2011Carpentier (contact),,,https://recherche.cnam.fr/agenda-actus-/assti-transformer-pour-prosperer-dans-un-monde-durable-1602430.kjsp?RH=1423153477811,,Muriel Pr\u00e9vot\u2011Carpentier,3\nNA-2026-03,2026,,JRTCC 2026,Colloque,,2026-05-29,2026-05-30,29 et 30 mai 2026,,Dijon,France,,Participation au comit\u00e9 scientifique,,St\u00e9phanie Vanwalleghem Maury (comit\u00e9 scientifique),,,https://www.aftcc.org/jrtcc-2026,,St\u00e9phanie Vanwalleghem Maury,2\nNA-2026-04,2026,,Colloque IA et IV,Colloque,\u00ab IA et IV \u00bb,2026-09-24,2026-09-25,24 et 25 septembre 2026,,,France,\"Maison de la recherche (amphi MR002), Universit\u00e9 Paris 8\",Implication non pr\u00e9cis\u00e9e (information transmise par Imad Saleh),,Imad Saleh (contact),,,,,Imad Saleh,2\nNA-2026-05,2026,,Piloter des \u00e9v\u00e9nements scientifiques \u00e0 l\u2019\u00e8re des technologies intellectives,Journ\u00e9es d'\u00e9tudes,\u00ab Piloter des \u00e9v\u00e9nements scientifiques \u00e0 l\u2019\u00e8re des technologies intellectives \u00bb,2026-03-26,2026-03-27,26 et 27 mars 2026,,,France,Universit\u00e9 Paris 8 (A 148),Organisation / implication (information transmise par Samuel Szoniecky),,Samuel Szoniecky (contact),,,https://humanites-numeriques-universite-paris-8.github.io/cyberSciencesEvents/joMars2026.html,,Samuel Szoniecky,2\nNA-2026-06,2026,,Fronti\u00e8res num\u00e9riques,Conf\u00e9rence,\u00ab Analogies & Technologies \u00bb,2026-06-04,2026-06-06,4 - 6 juin 2026,,Djerba,Tunisie,,Implication (information transmise par Samuel Szoniecky),,Samuel Szoniecky (contact),,,https://humanum-p8.fr/conferences/frontieres-numeriques_2026/docs/,,Samuel Szoniecky,3\nNA-2026-07,2026,,Colloque EPIQUE (13e),Colloque,,2026-07-07,2026-07-10,7-10 juillet 2026,,Lorient,France,,Implication (information transmise par Fran\u00e7oise Decortis),,Fran\u00e7oise Decortis (contact),,,https://arpege-recherche.org/activites/colloques-epique/13e-colloque-epique,,Fran\u00e7oise Decortis,4\nNA-2026-08,2026,,Congr\u00e8s de la SELF 2026,Congr\u00e8s,,,,Septembre 2026 (dates exactes \u00e0 pr\u00e9ciser),,Nantes,France,,Implication (information transmise par Fran\u00e7oise Decortis),,Fran\u00e7oise Decortis (contact),,,https://www.ergonomie-self.org/evenement/congres-self-2026/,Dates exactes non indiqu\u00e9es dans la r\u00e9ponse.,Fran\u00e7oise Decortis,\nNA-2026-09,2026,,TEXTE [S-oN] IMAGE 8,Colloque / expositions,TEXTE [S-oN] IMAGE 8,2026-04-20,2026-04-26,Semaine du 20 au 26 avril 2026 (colloque le 24 avril 2026),,S\u00e9oul,Cor\u00e9e du Sud,\"WINDMILL, B2, Wonhyo-ro 13, Yongsan-gu, Seoul\",Implication (information transmise par Marc Veyrat),,Marc Veyrat (contact),,,https://text-son-im8.sciencesconf.org/,Format hybride colloque + expositions.,Marc Veyrat,7\n";
+
+  const statusEl = document.getElementById('status');
+  const tbody = document.getElementById('tbody');
+
+  const btnDate = document.getElementById('sortDate');
+  const btnTitle = document.getElementById('sortTitle');
+  const btnAxe = document.getElementById('sortAxe');
+
+  const arrowDate = document.getElementById('sortDateArrow');
+  const arrowTitle = document.getElementById('sortTitleArrow');
+  const arrowAxe = document.getElementById('sortAxeArrow');
+
+  let records = [];
+  let sortKey = 'date';  // 'date' | 'title' | 'axe'
+  let sortDir = 1;       // 1 asc, -1 desc
+
+  function escapeHTML(s) {
+    return (s ?? '').toString().replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // Robust CSV parser (handles quotes + commas + CRLF)
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') {
+            field += '"';
+            i++;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          field += c;
+        }
+      } else {
+        if (c === '"') {
+          inQuotes = true;
+        } else if (c === ',') {
+          row.push(field);
+          field = '';
+        } else if (c === '\n') {
+          row.push(field);
+          rows.push(row);
+          row = [];
+          field = '';
+        } else if (c === '\r') {
+          // ignore
+        } else {
+          field += c;
+        }
+      }
+    }
+
+    // last field/row
+    if (field.length > 0 || row.length > 0) {
+      row.push(field);
+      rows.push(row);
+    }
+
+    if (!rows.length) return { headers: [], data: [] };
+
+    const headers = rows.shift().map(h => (h ?? '').trim());
+    const data = rows
+      .filter(r => r.some(cell => (cell ?? '').trim() !== ''))
+      .map(r => {
+        const obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = (r[j] ?? '').trim();
+        }
+        return obj;
+      });
+    return { headers, data };
+  }
+
+  function parseISODate(iso) {
+    if (!iso) return null;
+    const d = new Date(iso + 'T00:00:00');
+    return isNaN(d) ? null : d;
+  }
+
+  const fmtFull = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const fmtMonthYear = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
+
+  function formatDateRange(startISO, endISO, fallbackText) {
+    const d1 = parseISODate(startISO);
+    const d2 = parseISODate(endISO);
+
+    if (d1 && d2) {
+      if (startISO === endISO) return fmtFull.format(d1);
+      const sameMonth = d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear();
+      if (sameMonth) {
+        return `${d1.getDate()}–${d2.getDate()} ${fmtMonthYear.format(d1)}`;
+      }
+      return `${fmtFull.format(d1)} – ${fmtFull.format(d2)}`;
+    }
+    if (d1) return fmtFull.format(d1);
+    if (fallbackText) return fallbackText;
+    return 'Date à préciser';
+  }
+
+  function norm(s) {
+    return (s ?? '').toString().trim().toLocaleLowerCase('fr-FR');
+  }
+
+  function dateSortKey(rec) {
+    const d = parseISODate(rec['Date début']) || parseISODate(rec['Date fin']);
+    return d ? d.getTime() : Number.POSITIVE_INFINITY;
+  }
+
+  function getTitle(rec) {
+    return rec['Manifestation (nom)'] || rec['Thématique / titre complet'] || '(Sans titre)';
+  }
+
+  function setActiveButton(key) {
+    // visual state
+    const all = [btnDate, btnTitle, btnAxe];
+    all.forEach(b => b.classList.remove('active'));
+    btnDate.setAttribute('aria-pressed', 'false');
+    btnTitle.setAttribute('aria-pressed', 'false');
+    btnAxe.setAttribute('aria-pressed', 'false');
+
+    if (key === 'date') { btnDate.classList.add('active'); btnDate.setAttribute('aria-pressed', 'true'); }
+    if (key === 'title') { btnTitle.classList.add('active'); btnTitle.setAttribute('aria-pressed', 'true'); }
+    if (key === 'axe') { btnAxe.classList.add('active'); btnAxe.setAttribute('aria-pressed', 'true'); }
+  }
+
+  function renderSortArrows() {
+    arrowDate.textContent = '';
+    arrowTitle.textContent = '';
+    arrowAxe.textContent = '';
+
+    const arrow = sortDir === 1 ? '↑' : '↓';
+    if (sortKey === 'date') arrowDate.textContent = arrow;
+    if (sortKey === 'title') arrowTitle.textContent = arrow;
+    if (sortKey === 'axe') arrowAxe.textContent = arrow;
+  }
+
+  function sortAndRender() {
+    const sorted = [...records];
+
+    sorted.sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === 'date') {
+        cmp = dateSortKey(a) - dateSortKey(b);
+      } else if (sortKey === 'title') {
+        cmp = norm(getTitle(a)).localeCompare(norm(getTitle(b)), 'fr');
+      } else if (sortKey === 'axe') {
+        cmp = norm(a['Axe']).localeCompare(norm(b['Axe']), 'fr');
+        if (cmp === 0) cmp = norm(getTitle(a)).localeCompare(norm(getTitle(b)), 'fr');
+      }
+      return cmp * sortDir;
+    });
+
+    renderTable(sorted);
+    setActiveButton(sortKey);
+    renderSortArrows();
+  }
+
+  function renderTable(list) {
+    tbody.innerHTML = '';
+
+    for (const rec of list) {
+      const id = escapeHTML(rec['ID'] || (rec['Manifestation (nom)'] + '|' + rec['Date début'] + '|' + rec['Axe']));
+      const dateText = formatDateRange(rec['Date début'], rec['Date fin'], rec['Date (texte original)']);
+      const title = getTitle(rec);
+      const axe = rec['Axe'] || '—';
+
+      const details = {
+        'Type': rec['Type'],
+        'Thématique / titre complet': rec['Thématique / titre complet'],
+        'Date (texte original)': rec['Date (texte original)'],
+        'Horaire': rec['Horaire (si précisé)'],
+        'Ville': rec['Ville'],
+        'Pays': rec['Pays'],
+        'Institution / lieu': rec['Institution / lieu'],
+        'Implication de Paragraphe': rec['Implication de Paragraphe'],
+        'Partenaires / co-organisateurs': rec['Partenaires / co-organisateurs'],
+        'Organisateurs (personnes)': rec['Organisateurs (personnes)'],
+        'Participants / intervenants': rec['Participants / intervenants'],
+        'Projet / cadre': rec['Projet / cadre'],
+        'URL': rec['URL'],
+        'Notes / statut': rec['Notes / statut'],
+        'Source': rec['Source (réponse)'],
+      };
+
+      const summaryTr = document.createElement('tr');
+      summaryTr.className = 'summary-row';
+      summaryTr.innerHTML = `
+        <td class="col-date">${escapeHTML(dateText)}</td>
+        <td class="col-title"><div class="title">${escapeHTML(title)}</div></td>
+        <td class="col-axe">${escapeHTML(axe)}</td>
+        <td class="col-actions">
+          <button type="button" class="infoBtn" data-target="${id}">Infos</button>
+        </td>
+      `;
+
+      const detailsTr = document.createElement('tr');
+      detailsTr.className = 'details-row';
+      detailsTr.dataset.id = id;
+      detailsTr.style.display = 'none';
+
+      let kvHtml = '<div class="kv">';
+      for (const [k, vRaw] of Object.entries(details)) {
+        const v = (vRaw ?? '').toString().trim();
+        if (!v) continue;
+
+        let vHtml = escapeHTML(v);
+        if (k === 'URL') {
+          const safeUrl = v;
+          vHtml = `<a href="${escapeHTML(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHTML(safeUrl)}</a>`;
+        }
+        kvHtml += `<div class="k">${escapeHTML(k)}</div><div class="v">${vHtml}</div>`;
+      }
+      kvHtml += '</div>';
+
+      detailsTr.innerHTML = `
+        <td colspan="4">
+          <div class="details" role="region" aria-label="Détails">
+            ${kvHtml || '<span class="muted">Aucun détail renseigné.</span>'}
+          </div>
+        </td>
+      `;
+
+      tbody.appendChild(summaryTr);
+      tbody.appendChild(detailsTr);
+    }
+
+    // attach toggle handlers
+    tbody.querySelectorAll('.infoBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const detailRow = tbody.querySelector(`tr.details-row[data-id="${CSS.escape(targetId)}"]`);
+        if (!detailRow) return;
+
+        const isOpen = detailRow.style.display !== 'none';
+        detailRow.style.display = isOpen ? 'none' : 'table-row';
+        btn.textContent = isOpen ? 'Infos' : 'Fermer';
+      });
+    });
+  }
+
+  async function loadCSV() {
+    let csvText = '';
+    let usedFallback = false;
+
+    try {
+      const resp = await fetch(GOOGLE_CSV_URL, { cache: 'no-store' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      csvText = await resp.text();
+    } catch (e) {
+      usedFallback = true;
+      csvText = EMBEDDED_CSV;
+    }
+
+    const parsed = parseCSV(csvText);
+    let data = parsed.data || [];
+
+    records = data;
+
+    // Update the year pill (e.g., "2026" or "2026–2027") based on the dataset
+    const yearPill = document.getElementById('yearPill');
+    if (yearPill) {
+      const years = new Set();
+      for (const rec of records) {
+        let y = (rec['Année'] || '').toString().trim();
+        if (!/^\d{4}$/.test(y)) {
+          const d = (rec['Date début'] || rec['Date fin'] || '').toString().trim();
+          const mm = d.match(/^(\d{4})-/);
+          if (mm) y = mm[1];
+        }
+        if (/^\d{4}$/.test(y)) years.add(parseInt(y, 10));
+      }
+
+      if (years.size) {
+        const ys = Array.from(years).sort((a,b) => a-b);
+        const label = (ys.length === 1) ? String(ys[0]) : `${ys[0]}–${ys[ys.length - 1]}`;
+        yearPill.textContent = label;
+        document.title = `Manifestations scientifiques – Paragraphe (${label})`;
+      } else {
+        yearPill.style.display = 'none';
+      }
+    }
+
+    const loadedMsg = usedFallback
+      ? 'Chargement depuis la copie intégrée (le navigateur a bloqué ou échoué sur le CSV Google Sheets).'
+      : 'Chargement depuis Google Sheets réussi.';
+
+    statusEl.innerHTML = `
+      ${escapeHTML(loadedMsg)} • ${records.length} manifestation(s) • Dernière mise à jour : ${new Date().toLocaleString('fr-FR')}
+    `;
+
+    sortAndRender();
+  }
+
+  function bindSortButtons() {
+    function setSort(key) {
+      if (sortKey === key) {
+        sortDir *= -1;  // toggle direction
+      } else {
+        sortKey = key;
+        sortDir = 1;    // reset to ascending
+      }
+      sortAndRender();
+    }
+
+    btnDate.addEventListener('click', () => setSort('date'));
+    btnTitle.addEventListener('click', () => setSort('title'));
+    btnAxe.addEventListener('click', () => setSort('axe'));
+  }
+
+  bindSortButtons();
+  loadCSV().catch(err => {
+    statusEl.innerHTML = `<span class="error">Erreur : ${escapeHTML(err?.message || String(err))}</span>`;
+  });
+})();
+</script>
+</body>
+</html>
