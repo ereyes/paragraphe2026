@@ -16,6 +16,9 @@
       --btn-hover: #ededed;
       --btn-active: #dfefff;
       --focus: #1a73e8;
+      --event-bg: #f2f7ff;
+      --event-bg-hover: #e8f1ff;
+      --overlay: rgba(0,0,0,0.35);
     }
     * { box-sizing: border-box; }
     body {
@@ -23,137 +26,381 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color: var(--text);
       background: var(--bg);
-      line-height: 1.45;
+      line-height: 1.35;
     }
+    a { color: var(--focus); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 16px; }
+
     header {
-      padding: 24px 16px 10px;
       border-bottom: 1px solid var(--border);
       background: var(--bg);
     }
-    .wrap {
-      max-width: var(--maxw);
-      margin: 0 auto;
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    h1 {
-      font-size: 18px;
-      margin: 0 0 6px;
-      font-weight: 650;
+    .pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--bg-soft);
     }
     .sub {
+      margin: 6px 0 0 0;
       color: var(--muted);
-      font-size: 13px;
-      margin: 0;
+      font-size: 14px;
     }
+
     .toolbar {
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-soft);
+    }
+    .toolbarRow {
       display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
+      padding: 10px 16px;
+    }
+    .toolbarGroup {
+      display: flex;
       gap: 8px;
       align-items: center;
-      padding: 12px 16px;
-      background: var(--bg-soft);
-      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
     }
-    .toolbar .label {
-      font-size: 13px;
+    .label {
       color: var(--muted);
-      margin-right: 4px;
+      font-size: 13px;
+      white-space: nowrap;
     }
     button {
       appearance: none;
       border: 1px solid var(--border);
       background: var(--btn);
       color: var(--text);
-      padding: 8px 10px;
       border-radius: 8px;
+      padding: 6px 10px;
       font-size: 13px;
       cursor: pointer;
     }
     button:hover { background: var(--btn-hover); }
-    button:focus-visible {
-      outline: 3px solid rgba(26,115,232,.25);
-      outline-offset: 2px;
-      border-color: var(--focus);
-    }
     button.active {
       background: var(--btn-active);
-      border-color: rgba(26,115,232,.35);
+      border-color: #c6ddff;
     }
-    main { padding: 0 16px 24px; }
+    button:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+    select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .status {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-soft);
+      padding: 10px 12px;
+      margin: 14px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .muted { color: var(--muted); }
+
+    /* List view table */
     table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg);
     }
     thead th {
       text-align: left;
-      font-size: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
       color: var(--muted);
-      font-weight: 600;
-      padding: 10px 10px;
+      background: var(--bg-soft);
       border-bottom: 1px solid var(--border);
-      background: var(--bg);
-      position: sticky;
-      top: 0;
-      z-index: 2;
     }
     tbody td {
-      padding: 10px 10px;
+      padding: 10px 12px;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
       font-size: 14px;
     }
-    .col-date { width: 170px; }
+    tbody tr.summary-row:hover td { background: #fcfcfc; }
+    .col-date { width: 190px; white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; }
     .col-title { width: auto; }
-    .col-axe { width: 130px; }
-    .col-actions { width: 88px; text-align: right; }
-    .muted { color: var(--muted); }
-    .title {
-      font-weight: 600;
-      margin: 0;
-    }
-    .details-row td {
-      background: var(--bg-soft);
-      padding-top: 0;
-    }
+    .col-axe { width: 120px; white-space: nowrap; }
+    .col-actions { width: 92px; text-align: right; }
+    .title { font-weight: 600; }
     .details {
-      border-left: 3px solid var(--border);
-      padding: 10px 12px 12px;
-      margin: 0 0 8px;
-      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
     }
     .kv {
       display: grid;
-      grid-template-columns: 210px 1fr;
-      gap: 6px 12px;
+      grid-template-columns: 220px 1fr;
+      gap: 8px 12px;
+      font-size: 13px;
     }
     .k { color: var(--muted); }
-    .v a { color: inherit; }
-    .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #fff;
-      font-size: 12px;
-      color: var(--muted);
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-    .status {
-      padding: 12px 16px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .error {
-      color: #b00020;
-    }
+    .v { color: var(--text); overflow-wrap: anywhere; }
+
     @media (max-width: 720px) {
-      .col-date { width: 120px; }
-      .col-axe { width: 100px; }
-      .kv {
-        grid-template-columns: 1fr;
-      }
-      .col-actions { width: 76px; }
+      .col-axe { display: none; }
+      .kv { grid-template-columns: 1fr; }
+      thead th:nth-child(3), tbody td:nth-child(3) { display: none; }
+    }
+
+    /* Timeline view */
+    .timeline {
+      position: relative;
+      padding-left: 26px;
+      margin-top: 6px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .t-month {
+      margin: 18px 0 8px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .t-item {
+      position: relative;
+      margin: 0 0 10px;
+      padding: 10px 12px 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+    }
+    .t-item::before {
+      content: "";
+      position: absolute;
+      left: -20px;
+      top: 18px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 2px solid var(--focus);
+      background: var(--bg);
+    }
+
+    /* Stacked header to avoid overlap:
+       line 1 = date, line 2 = title, line 3 = axe */
+    .t-head {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .t-main {
+      flex: 1 1 auto;
+      min-width: 0; /* critical for wrapping inside flex */
+    }
+    .t-date {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 4px;
+    }
+    .t-title {
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+    .t-axe {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+    .t-actions { flex: 0 0 auto; text-align: right; }
+    .t-details {
+      margin-top: 10px;
+    }
+
+    /* Calendar view */
+    .calendarControls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .yearGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .month {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .monthHeader {
+      padding: 8px 10px;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .monthTable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .monthTable th {
+      padding: 4px 0;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    .monthTable td {
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      height: 64px;
+      vertical-align: top;
+      padding: 4px 5px;
+    }
+    .monthTable tr td:last-child { border-right: none; }
+    .dayCell {
+      user-select: none;
+    }
+    .dayCell.hasEvents {
+      cursor: pointer;
+      background: var(--event-bg);
+    }
+    .dayCell.hasEvents:hover { background: var(--event-bg-hover); }
+    .dayCell.selected { outline: 2px solid var(--focus); outline-offset: -2px; }
+    .dayTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .dayNum {
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+    }
+    /* Simple dot indicator (no titles in the grid) */
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--focus);
+      display: inline-block;
+      flex: 0 0 auto;
+      align-self: center;
+    }
+
+    .dayPanel {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-soft);
+      padding: 10px 12px;
+    }
+    .dayPanel h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+    .dayEvent {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin: 0 0 10px;
+    }
+    .dayEventHead {
+      display: grid;
+      grid-template-columns: 1fr 92px;
+      gap: 10px;
+      align-items: start;
+    }
+    .dayEventMeta {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .unscheduled {
+      margin-top: 14px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    /* Modal (popup) pour le détail des jours (vue calendrier) */
+    body.modalOpen { overflow: hidden; }
+
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none; /* becomes flex when open */
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
+    .modal {
+      width: min(900px, 100%);
+      max-height: 85vh;
+      overflow: auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.25);
+    }
+    .modalHeader {
+      position: sticky;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-soft);
+    }
+    .modalHeader h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+    .modalBody {
+      padding: 12px;
+      background: var(--bg);
+    }
+    .modalCloseBtn {
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -161,16 +408,27 @@
   <header>
     <div class="wrap">
       <h1>Manifestations scientifiques – Paragraphe <span class="pill" id="yearPill">…</span></h1>
-      <p class="sub">Liste condensée (date, titre, axe) + bouton <strong>Infos</strong> pour afficher les détails. Source : Google Sheets (CSV publié).</p>
+      <p class="sub">Aperçu condensé (date, titre, axe) avec bouton <strong>Infos</strong>. Choisissez la <strong>vue</strong> : liste, ligne de temps ou calendrier.</p>
     </div>
   </header>
 
   <div class="toolbar">
-    <div class="wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <span class="label">Trier par :</span>
-      <button id="sortDate" class="active" type="button" aria-pressed="true">Date <span id="sortDateArrow">↑</span></button>
-      <button id="sortTitle" type="button" aria-pressed="false">Titre <span id="sortTitleArrow" class="muted"></span></button>
-      <button id="sortAxe" type="button" aria-pressed="false">Axe <span id="sortAxeArrow" class="muted"></span></button>
+    <div class="wrap toolbarRow">
+      <div class="toolbarGroup">
+        <label class="label" for="viewSelect">Vue :</label>
+        <select id="viewSelect">
+          <option value="list">Liste</option>
+          <option value="timeline">Ligne de temps</option>
+          <option value="calendar">Calendrier</option>
+        </select>
+      </div>
+
+      <div class="toolbarGroup" id="sortGroup" aria-label="Tri">
+        <span class="label">Trier par :</span>
+        <button id="sortDate" class="active" type="button" aria-pressed="true">Date <span id="sortDateArrow">↑</span></button>
+        <button id="sortTitle" type="button" aria-pressed="false">Titre <span id="sortTitleArrow" class="muted"></span></button>
+        <button id="sortAxe" type="button" aria-pressed="false">Axe <span id="sortAxeArrow" class="muted"></span></button>
+      </div>
     </div>
   </div>
 
@@ -178,29 +436,83 @@
     <div class="wrap">
       <div class="status" id="status">Chargement…</div>
 
-      <table aria-label="Manifestations scientifiques">
-        <thead>
-          <tr>
-            <th class="col-date">Date</th>
-            <th class="col-title">Manifestation</th>
-            <th class="col-axe">Axe</th>
-            <th class="col-actions"></th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <!-- rows injected here -->
-        </tbody>
-      </table>
+      <!-- LIST VIEW -->
+      <section id="viewList" aria-label="Vue liste">
+        <table aria-label="Manifestations scientifiques (liste)">
+          <thead>
+            <tr>
+              <th class="col-date">Date</th>
+              <th class="col-title">Manifestation</th>
+              <th class="col-axe">Axe</th>
+              <th class="col-actions"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <!-- rows injected here -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- TIMELINE VIEW -->
+      <section id="viewTimeline" aria-label="Vue ligne de temps" style="display:none;">
+        <div id="timeline" class="timeline" aria-label="Ligne de temps verticale">
+          <!-- items injected here -->
+        </div>
+      </section>
+
+      <!-- CALENDAR VIEW -->
+      <section id="viewCalendar" aria-label="Vue calendrier" style="display:none;">
+        <div class="calendarControls">
+          <label class="label" for="calendarYear">Année :</label>
+          <select id="calendarYear"></select>
+          <span class="label">Cliquez sur un jour mis en évidence pour afficher les manifestations.</span>
+        </div>
+
+        <div id="calendarGrid" class="yearGrid" aria-label="Calendrier de l'année"></div>
+
+        <div id="unscheduled" class="unscheduled" style="display:none;"></div>
+      </section>
     </div>
   </main>
+
+  <!-- Modal (popup) pour le détail des jours (vue calendrier) -->
+  <div id="modalOverlay" class="modalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalHeader">
+        <h3 id="modalTitle">Détails</h3>
+        <button type="button" id="modalClose" class="modalCloseBtn">Fermer</button>
+      </div>
+      <div id="modalBody" class="modalBody"></div>
+    </div>
+  </div>
+
 
 <script>
 (() => {
   const GOOGLE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5Jc2U7PmwPeB6W98TDYDTiABWCexypyDc2U7Qg-4x6xXEgiM4DMxjsqYASA2l-H7MfP-r8px0EPgl/pub?gid=0&single=true&output=csv";
   const EMBEDDED_CSV = "ID,Ann\u00e9e,Axe / \u00e9quipe,Manifestation (nom),Type,Th\u00e9matique / titre complet,Date d\u00e9but,Date fin,Date (texte original),Horaire (si pr\u00e9cis\u00e9),Ville,Pays,Institution / lieu,Implication de Paragraphe,Partenaires / co-organisateurs,Organisateurs (personnes),Participants / intervenants,Projet / cadre,URL,Notes / statut,Source (r\u00e9ponse),Dur\u00e9e (jours)\nMPIP-2026-01,2026,MPIP,Journ\u00e9e d'\u00e9tude GER GENIC,Journ\u00e9e d'\u00e9tude,\"\u00ab \u00c9thique et formation \u00bb (GER GENIC, labellis\u00e9 SFSIC)\",2026-06-11,2026-06-11,11 juin 2026,,,France,Campus Condorcet,Co-organisation (avec le CEMTI) \u2014 sous r\u00e9serve d'accord de principe pour un petit financement,CEMTI ; GER GENIC,Or\u00e9lie (contact) ; Paragraphe ; CEMTI,,,https://genic.hypotheses.org/1137,Demande de financement envoy\u00e9e le 10/03/2026 ; accord de principe en attente.,Or\u00e9lie \u2014 Axe MPIP,1\nCITU-2026-01,2026,CITU,HIS 10,Colloque international,\u00ab Patrimoines vuln\u00e9rables et intelligence artificielle \u00bb,2026-06-18,2026-06-19,18 et 19 juin 2026,,Valenciennes,France,Universit\u00e9 Polytechnique Hauts-de-France,Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,,Axe CITU,2\nCITU-2026-02,2026,CITU,HyperUrbain.10,Colloque,\u00ab Re\u2011conception de l'institution de la ville post\u2011num\u00e9rique \u00bb,2026-10-20,2026-10-21,20 et 21 octobre 2026,,Aubervilliers / Paris,France,Campus Aubervilliers-Paris,Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,10e \u00e9dition.,Axe CITU,2\nCITU-2026-03,2026,CITU,CIDE.25,Colloque / conf\u00e9rence,\u00ab Production et circulation de l'information \u00e0 l\u2019\u00e8re de l\u2019intelligence artificielle : nouvelles pratiques et fractures \u00e9mergentes \u00bb,2026-11-26,2026-11-27,26 et 27 novembre 2026,,Dakar,S\u00e9n\u00e9gal,,Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,,Axe CITU,2\nCITU-2027-01,2027,CITU,3AI 2027,Colloque / conf\u00e9rence,\u00ab Co-agentivity and alterity in the Age of AI \u00bb,2027-02-04,2027-02-05,4 et 5 f\u00e9vrier 2027,,Barcelona,Espagne,Universitat de Barcelona (ENTI\u2011UB),Implication non pr\u00e9cis\u00e9e (liste transmise par l\u2019axe),,,,,,Hors p\u00e9rim\u00e8tre 2026 (mentionn\u00e9 dans les r\u00e9ponses).,Axe CITU,2\nDN-2026-01,2026,DN,International Web Studies 5,Conf\u00e9rence internationale,,2026-10-21,2026-10-23,Oct. 21-23 (ann\u00e9e non pr\u00e9cis\u00e9e dans la r\u00e9ponse \u2014 suppos\u00e9e 2026),,Alessandria,Italie,Universit\u00e0 del Piemonte Orientale,Chairs : Everardo Reyes ; Giancarlo Ruffo ; Mark Bernstein,,Everardo Reyes ; Giancarlo Ruffo ; Mark Bernstein,,,,Ann\u00e9e \u00e0 confirmer si n\u00e9cessaire.,Axe DN,3\nDN-2026-02,2026,DN,Interfaces et images environnementales,Journ\u00e9e d'\u00e9tude,\u00ab Interfaces et images environnementales : \u00c9cologies des donn\u00e9es et mondes num\u00e9ris\u00e9s \u00bb,2026-06-11,2026-06-11,11 juin 2026,,Tours,France,Universit\u00e9 de Tours,\"Co-organisation (PRIM, Paragraphe, MSH HE, GER Environnement)\",PRIM ; MSH HE ; GER Environnement,Federico Biggio ; Gustavo Gomez ; Everardo Reyes ; Rosa Cinelli,,,,,Axe DN,1\nDN-2026-03,2026,DN,S\u00e9minaire HERMES \u2014 s\u00e9ance,S\u00e9minaire,\u00ab Imaginaires artificiels : cr\u00e9ativit\u00e9 et recherche \u00e0 l\u2019\u00e8re de l\u2019image g\u00e9n\u00e9rative \u00bb,2026-04-24,2026-04-24,Vendredi 24 avril 2026,13h\u201315h (CET),,,,Organisation / animation (organisateurs indiqu\u00e9s),,Everardo Reyes ; Kristian Bankov ; Rosa Cinelli,Daniel Binns ; Philippe Boisnard ; Rosa Cinelli ; Boris Eldagsen,S\u00e9minaire HERMES,,Lieu non pr\u00e9cis\u00e9 dans la r\u00e9ponse (pr\u00e9sentiel / distanciel \u00e0 pr\u00e9ciser).,Axe DN,1\nDN-2026-04,2026,DN,Panel \u00ab Intersemiotic Translations in Games and XR \u00bb (AISV/IAVS),Panel / session,\"\u00ab Intersemiotic Translations in Games and XR: The Ludic Attitude Between Therapeutic Mediation, Identity Experimentation, and interreal translations \u00bb\",2026-02-09,2026-02-11,9-11 f\u00e9vrier 2026 (14e Congr\u00e8s R\u00e9gional AISV / IAVS),,S\u00e3o Paulo,Br\u00e9sil,USP (Universit\u00e9 de S\u00e3o Paulo),Co-organisation de la session/panel (avec E. D'armenio et Gustavo Moreira Kares),Univ. Lorraine (E. D'armenio) ; Univ. Tampere (Gustavo Moreira Kares),E. D'armenio ; Gustavo Moreira Kares,,14e Congr\u00e8s R\u00e9gional AISV / IAVS,,,Axe DN,3\nADN-2026-01,2026,ADN,\"Faire revue : communaut\u00e9s, infrastructures, outils\",Journ\u00e9e,\"\u00ab Faire revue : communaut\u00e9s, infrastructures, outils \u00bb\",2026-05-07,2026-05-07,7 mai 2026,,,,MSHB,Organisation / participation (dans le cadre du projet Revue 3.0),,Nicolas Sauret (contact),,Projet Revue 3.0,,Lieu (ville) \u00e0 pr\u00e9ciser.,Nicolas Sauret \u2014 Axe ADN,1\nADN-2026-02,2026,ADN,Sobri\u00e9t\u00e9 des archives num\u00e9riques (GI\u2011GIT),Journ\u00e9e d'\u00e9tude,Journ\u00e9e d\u2019\u00e9tude sur la sobri\u00e9t\u00e9 des archives num\u00e9riques,,,D\u00e9but juillet 2026 (date exacte \u00e0 pr\u00e9ciser),,Paris,France,DataLab de la BnF,Organisation dans le cadre du GI\u2011GIT,BnF (DataLab),Nicolas Sauret (contact),,GI\u2011GIT,,Date non fix\u00e9e (mention \u00ab d\u00e9but juillet \u00bb).,Nicolas Sauret \u2014 Axe ADN,\nNA-2026-01,2026,,Congr\u00e8s de la Soci\u00e9t\u00e9 Internationale d\u2019Ergologie,Congr\u00e8s,7e congr\u00e8s de la Soci\u00e9t\u00e9 Internationale d\u2019Ergologie,2026-06-04,2026-06-06,\"4, 5, 6 juin 2026\",,Paris,France,,Co-organisation avec le CRTD\u2011Cnam,CRTD\u2011Cnam,Muriel Pr\u00e9vot\u2011Carpentier (contact),,,https://ergologia.org/7emecongres/,,Muriel Pr\u00e9vot\u2011Carpentier,3\nNA-2026-02,2026,,Assises Sciences / Soci\u00e9t\u00e9 sur le travail et de l\u2019innovation,Assises,\u00ab Transformer pour prosp\u00e9rer dans un monde durable \u00bb,2026-10-07,2026-10-09,\"7, 8, 9 octobre 2026\",,Paris,France,,\"Labellis\u00e9 \u00ab Grand \u00e9v\u00e8nement Paris 8 \u00bb ; co-organisation (avec Cnam, EHESP, etc.)\",Cnam ; EHESP ; AgroSup Dijon / Institut Agro ; ANACT ; CNRS ; GIS CREAPT ; GIS Gestes ; INRAE ; Inserm ; INTEFP ; IPST ; Sciences Po Paris ; Univ. Gustave Eiffel ; Univ. de Lille ; UPEC ; Univ. de Poitiers ; etc.,Muriel Pr\u00e9vot\u2011Carpentier (contact),,,https://recherche.cnam.fr/agenda-actus-/assti-transformer-pour-prosperer-dans-un-monde-durable-1602430.kjsp?RH=1423153477811,,Muriel Pr\u00e9vot\u2011Carpentier,3\nNA-2026-03,2026,,JRTCC 2026,Colloque,,2026-05-29,2026-05-30,29 et 30 mai 2026,,Dijon,France,,Participation au comit\u00e9 scientifique,,St\u00e9phanie Vanwalleghem Maury (comit\u00e9 scientifique),,,https://www.aftcc.org/jrtcc-2026,,St\u00e9phanie Vanwalleghem Maury,2\nNA-2026-04,2026,,Colloque IA et IV,Colloque,\u00ab IA et IV \u00bb,2026-09-24,2026-09-25,24 et 25 septembre 2026,,,France,\"Maison de la recherche (amphi MR002), Universit\u00e9 Paris 8\",Implication non pr\u00e9cis\u00e9e (information transmise par Imad Saleh),,Imad Saleh (contact),,,,,Imad Saleh,2\nNA-2026-05,2026,,Piloter des \u00e9v\u00e9nements scientifiques \u00e0 l\u2019\u00e8re des technologies intellectives,Journ\u00e9es d'\u00e9tudes,\u00ab Piloter des \u00e9v\u00e9nements scientifiques \u00e0 l\u2019\u00e8re des technologies intellectives \u00bb,2026-03-26,2026-03-27,26 et 27 mars 2026,,,France,Universit\u00e9 Paris 8 (A 148),Organisation / implication (information transmise par Samuel Szoniecky),,Samuel Szoniecky (contact),,,https://humanites-numeriques-universite-paris-8.github.io/cyberSciencesEvents/joMars2026.html,,Samuel Szoniecky,2\nNA-2026-06,2026,,Fronti\u00e8res num\u00e9riques,Conf\u00e9rence,\u00ab Analogies & Technologies \u00bb,2026-06-04,2026-06-06,4 - 6 juin 2026,,Djerba,Tunisie,,Implication (information transmise par Samuel Szoniecky),,Samuel Szoniecky (contact),,,https://humanum-p8.fr/conferences/frontieres-numeriques_2026/docs/,,Samuel Szoniecky,3\nNA-2026-07,2026,,Colloque EPIQUE (13e),Colloque,,2026-07-07,2026-07-10,7-10 juillet 2026,,Lorient,France,,Implication (information transmise par Fran\u00e7oise Decortis),,Fran\u00e7oise Decortis (contact),,,https://arpege-recherche.org/activites/colloques-epique/13e-colloque-epique,,Fran\u00e7oise Decortis,4\nNA-2026-08,2026,,Congr\u00e8s de la SELF 2026,Congr\u00e8s,,,,Septembre 2026 (dates exactes \u00e0 pr\u00e9ciser),,Nantes,France,,Implication (information transmise par Fran\u00e7oise Decortis),,Fran\u00e7oise Decortis (contact),,,https://www.ergonomie-self.org/evenement/congres-self-2026/,Dates exactes non indiqu\u00e9es dans la r\u00e9ponse.,Fran\u00e7oise Decortis,\nNA-2026-09,2026,,TEXTE [S-oN] IMAGE 8,Colloque / expositions,TEXTE [S-oN] IMAGE 8,2026-04-20,2026-04-26,Semaine du 20 au 26 avril 2026 (colloque le 24 avril 2026),,S\u00e9oul,Cor\u00e9e du Sud,\"WINDMILL, B2, Wonhyo-ro 13, Yongsan-gu, Seoul\",Implication (information transmise par Marc Veyrat),,Marc Veyrat (contact),,,https://text-son-im8.sciencesconf.org/,Format hybride colloque + expositions.,Marc Veyrat,7\n";
 
+  // ---------- DOM ----------
   const statusEl = document.getElementById('status');
+
+  const viewSelect = document.getElementById('viewSelect');
+  const sortGroup = document.getElementById('sortGroup');
+
+  const viewList = document.getElementById('viewList');
+  const viewTimeline = document.getElementById('viewTimeline');
+  const viewCalendar = document.getElementById('viewCalendar');
+
   const tbody = document.getElementById('tbody');
+  const timelineEl = document.getElementById('timeline');
+
+  const calendarYearSel = document.getElementById('calendarYear');
+  const calendarGrid = document.getElementById('calendarGrid');
+  const unscheduledEl = document.getElementById('unscheduled');
+
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
 
   const btnDate = document.getElementById('sortDate');
   const btnTitle = document.getElementById('sortTitle');
@@ -210,14 +522,663 @@
   const arrowTitle = document.getElementById('sortTitleArrow');
   const arrowAxe = document.getElementById('sortAxeArrow');
 
+  // ---------- State ----------
   let records = [];
-  let sortKey = 'date';  // 'date' | 'title' | 'axe'
-  let sortDir = 1;       // 1 asc, -1 desc
+  let headers = [];
+  let fieldMap = {};
 
+  let sortKey = 'date';     // 'date' | 'title' | 'axe'
+  let sortDir = 1;          // 1 asc, -1 desc
+  let currentView = 'list'; // 'list' | 'timeline' | 'calendar'
+
+  // calendarIndex: Map(year -> Map(isoDay -> Array<rec>))
+  let calendarIndex = new Map();
+  let unscheduled = [];
+
+  // ---------- Helpers ----------
   function escapeHTML(s) {
     return (s ?? '').toString().replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  function normKey(s) {
+    return (s ?? '')
+      .toString()
+      .trim()
+      .toLocaleLowerCase('fr-FR')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  // Column aliases for robustness (in case the Sheet header changes slightly)
+  const FIELD_ALIASES = {
+    id: ['id'],
+    year: ['annee', 'année', 'year'],
+    axe: ['axe', 'axe equipe', 'axe équipe', 'axe / equipe', 'axe / équipe'],
+    name: ['manifestation nom', 'manifestation', 'nom', 'evenement', 'événement', 'manifestation (nom)'],
+    type: ['type'],
+    fullTitle: ['thematique titre complet', 'thématique titre complet', 'titre complet', 'thematique', 'thématique', 'thématique / titre complet'],
+    start: ['date debut', 'date début', 'date de debut', 'date de début', 'date début'],
+    end: ['date fin', 'date de fin', 'date fin'],
+    dateOriginal: ['date texte original', 'date original', 'date (texte original)'],
+    time: ['horaire', 'horaire si precise', 'horaire (si precisé)', 'horaire (si précisé)'],
+    city: ['ville'],
+    country: ['pays'],
+    place: ['institution lieu', 'institution / lieu', 'lieu', 'institution'],
+    implication: ['implication de paragraphe', 'implication'],
+    partners: ['partenaires', 'co organisateurs', 'co-organisateurs', 'partenaires / co-organisateurs'],
+    organizers: ['organisateurs personnes', 'organisateurs', 'organisateurs (personnes)'],
+    participants: ['participants intervenants', 'participants', 'intervenants', 'participants / intervenants'],
+    project: ['projet cadre', 'projet', 'projet / cadre'],
+    url: ['url', 'lien'],
+    notes: ['notes statut', 'notes', 'statut', 'notes / statut'],
+    source: ['source reponse', 'source réponse', 'source', 'source (réponse)'],
+  };
+
+  function buildFieldMap(headers) {
+    const byNorm = new Map();
+    for (const h of headers) {
+      const nk = normKey(h);
+      if (!byNorm.has(nk)) byNorm.set(nk, h);
+    }
+
+    const map = {};
+    for (const [canon, aliases] of Object.entries(FIELD_ALIASES)) {
+      for (const a of aliases) {
+        const h = byNorm.get(normKey(a));
+        if (h) { map[canon] = h; break; }
+      }
+    }
+    return map;
+  }
+
+  function get(rec, canonKey) {
+    const h = fieldMap[canonKey];
+    if (!h) return '';
+    return (rec[h] ?? '').toString().trim();
+  }
+
+  function parseISODate(iso) {
+    if (!iso) return null;
+    const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return null;
+    const d = new Date(Date.UTC(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10)));
+    return isNaN(d) ? null : d;
+  }
+
+  function isoFromDateUTC(d) {
+    return d.toISOString().slice(0, 10);
+  }
+
+  function addDaysUTC(d, n) {
+    return new Date(d.getTime() + n * 86400000);
+  }
+
+  const fmtFull = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const fmtMonthYear = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+  function formatDateRange(startISO, endISO, fallbackText) {
+    const d1 = parseISODate(startISO);
+    const d2 = parseISODate(endISO);
+
+    if (d1 && d2) {
+      if (startISO === endISO) return fmtFull.format(d1);
+      return `${fmtFull.format(d1)} → ${fmtFull.format(d2)}`;
+    }
+    if (d1) return fmtFull.format(d1);
+    if (fallbackText) return fallbackText;
+    return 'Date à préciser';
+  }
+
+  function norm(s) {
+    return (s ?? '').toString().trim().toLocaleLowerCase('fr-FR');
+  }
+
+  function dateSortKey(rec) {
+    const d = parseISODate(get(rec, 'start')) || parseISODate(get(rec, 'end'));
+    return d ? d.getTime() : Number.POSITIVE_INFINITY;
+  }
+
+  function getTitle(rec) {
+    return get(rec, 'name') || get(rec, 'fullTitle') || '(Sans titre)';
+  }
+
+  function getAxe(rec) {
+    return get(rec, 'axe') || '—';
+  }
+
+  function getId(rec) {
+    const id = get(rec, 'id');
+    if (id) return id;
+    return `${getTitle(rec)}|${get(rec,'start')}|${getAxe(rec)}`;
+  }
+
+  function buildDetailsKVHtml(rec) {
+    const details = {
+      'Type': get(rec, 'type'),
+      'Thématique / titre complet': get(rec, 'fullTitle'),
+      'Date (texte original)': get(rec, 'dateOriginal'),
+      'Horaire': get(rec, 'time'),
+      'Ville': get(rec, 'city'),
+      'Pays': get(rec, 'country'),
+      'Institution / lieu': get(rec, 'place'),
+      'Implication de Paragraphe': get(rec, 'implication'),
+      'Partenaires / co-organisateurs': get(rec, 'partners'),
+      'Organisateurs (personnes)': get(rec, 'organizers'),
+      'Participants / intervenants': get(rec, 'participants'),
+      'Projet / cadre': get(rec, 'project'),
+      'URL': get(rec, 'url'),
+      'Notes / statut': get(rec, 'notes'),
+      'Source': get(rec, 'source'),
+    };
+
+    let kvHtml = '<div class="kv">';
+    let hasAny = false;
+    for (const [k, vRaw] of Object.entries(details)) {
+      const v = (vRaw ?? '').toString().trim();
+      if (!v) continue;
+      hasAny = true;
+
+      let vHtml = escapeHTML(v);
+      if (k === 'URL') {
+        const safeUrl = v;
+        vHtml = `<a href="${escapeHTML(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHTML(safeUrl)}</a>`;
+      }
+      kvHtml += `<div class="k">${escapeHTML(k)}</div><div class="v">${vHtml}</div>`;
+    }
+    kvHtml += '</div>';
+
+    if (!hasAny) return '<span class="muted">Aucun détail renseigné.</span>';
+    return kvHtml;
+  }
+
+  function setActiveButton(key) {
+    btnDate.classList.toggle('active', key === 'date');
+    btnTitle.classList.toggle('active', key === 'title');
+    btnAxe.classList.toggle('active', key === 'axe');
+
+    btnDate.setAttribute('aria-pressed', key === 'date' ? 'true' : 'false');
+    btnTitle.setAttribute('aria-pressed', key === 'title' ? 'true' : 'false');
+    btnAxe.setAttribute('aria-pressed', key === 'axe' ? 'true' : 'false');
+  }
+
+  function renderSortArrows() {
+    arrowDate.textContent = '';
+    arrowTitle.textContent = '';
+    arrowAxe.textContent = '';
+
+    const arrow = sortDir === 1 ? '↑' : '↓';
+    if (sortKey === 'date') arrowDate.textContent = arrow;
+    if (sortKey === 'title') arrowTitle.textContent = arrow;
+    if (sortKey === 'axe') arrowAxe.textContent = arrow;
+  }
+
+  function sortRecords(list) {
+    const sorted = [...list];
+    sorted.sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === 'date') {
+        cmp = dateSortKey(a) - dateSortKey(b);
+      } else if (sortKey === 'title') {
+        cmp = norm(getTitle(a)).localeCompare(norm(getTitle(b)), 'fr');
+      } else if (sortKey === 'axe') {
+        cmp = norm(getAxe(a)).localeCompare(norm(getAxe(b)), 'fr');
+        if (cmp === 0) cmp = norm(getTitle(a)).localeCompare(norm(getTitle(b)), 'fr');
+      }
+      return cmp * sortDir;
+    });
+    return sorted;
+  }
+
+  function attachInfoToggles(root) {
+    root.querySelectorAll('.infoBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        if (!targetId) return;
+
+        const row = root.querySelector(`tr.details-row[data-id="${CSS.escape(targetId)}"]`);
+        if (row) {
+          const isOpen = row.style.display !== 'none';
+          row.style.display = isOpen ? 'none' : 'table-row';
+          btn.textContent = isOpen ? 'Infos' : 'Fermer';
+          return;
+        }
+
+        const block = root.querySelector(`.details-block[data-id="${CSS.escape(targetId)}"]`);
+        if (block) {
+          const isOpen = block.style.display !== 'none';
+          block.style.display = isOpen ? 'none' : 'block';
+          btn.textContent = isOpen ? 'Infos' : 'Fermer';
+        }
+      });
+    });
+  }
+
+
+  // ---------- Modal (popup) ----------
+  function isModalOpen() {
+    return !!(modalOverlay && modalOverlay.style.display === 'flex');
+  }
+
+  function openModal(title, bodyHtml) {
+    if (!modalOverlay || !modalTitle || !modalBody) return;
+
+    modalTitle.textContent = title;
+    modalBody.innerHTML = bodyHtml || '';
+
+    modalOverlay.style.display = 'flex';
+    modalOverlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modalOpen');
+
+    // Enable "Infos" toggles inside the popup
+    attachInfoToggles(modalBody);
+
+    if (modalClose) modalClose.focus();
+  }
+
+  function closeModal() {
+    if (!modalOverlay) return;
+
+    modalOverlay.style.display = 'none';
+    modalOverlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modalOpen');
+
+    if (modalBody) modalBody.innerHTML = '';
+  }
+
+  if (modalClose) {
+    modalClose.addEventListener('click', closeModal);
+  }
+
+  if (modalOverlay) {
+    // Click outside the modal closes it
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isModalOpen()) closeModal();
+  });
+
+
+  // ---------- Renderers ----------
+  function renderTable(list) {
+    tbody.innerHTML = '';
+
+    for (const rec of list) {
+      const id = getId(rec);
+      const dateText = formatDateRange(get(rec,'start'), get(rec,'end'), get(rec,'dateOriginal'));
+      const title = getTitle(rec);
+      const axe = getAxe(rec);
+
+      const summaryTr = document.createElement('tr');
+      summaryTr.className = 'summary-row';
+      summaryTr.innerHTML = `
+        <td class="col-date">${escapeHTML(dateText)}</td>
+        <td class="col-title"><div class="title">${escapeHTML(title)}</div></td>
+        <td class="col-axe">${escapeHTML(axe)}</td>
+        <td class="col-actions">
+          <button type="button" class="infoBtn" data-target="${escapeHTML(id)}">Infos</button>
+        </td>
+      `;
+
+      const detailsTr = document.createElement('tr');
+      detailsTr.className = 'details-row';
+      detailsTr.dataset.id = id;
+      detailsTr.style.display = 'none';
+      detailsTr.innerHTML = `
+        <td colspan="4">
+          <div class="details" role="region" aria-label="Détails">
+            ${buildDetailsKVHtml(rec)}
+          </div>
+        </td>
+      `;
+
+      tbody.appendChild(summaryTr);
+      tbody.appendChild(detailsTr);
+    }
+
+    attachInfoToggles(tbody);
+  }
+
+  function renderTimeline(list) {
+    timelineEl.innerHTML = '';
+
+    let lastMonthKey = null;
+
+    for (const rec of list) {
+      const id = getId(rec);
+      const d = parseISODate(get(rec,'start')) || parseISODate(get(rec,'end'));
+      const monthKey = d ? `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}` : 'unknown';
+
+      // Month separators only make sense when sorting by date.
+      if (sortKey === 'date' && monthKey !== lastMonthKey) {
+        const h = document.createElement('div');
+        h.className = 't-month';
+        h.textContent = d ? fmtMonthYear.format(d) : 'Dates à préciser';
+        timelineEl.appendChild(h);
+        lastMonthKey = monthKey;
+      }
+
+      const dateText = formatDateRange(get(rec,'start'), get(rec,'end'), get(rec,'dateOriginal'));
+      const title = getTitle(rec);
+      const axe = getAxe(rec);
+
+      const item = document.createElement('div');
+      item.className = 't-item';
+
+      const axeLine = (axe && axe !== '—')
+        ? `<div class="t-axe">Axe : ${escapeHTML(axe)}</div>`
+        : '';
+
+      item.innerHTML = `
+        <div class="t-head">
+          <div class="t-main">
+            <div class="t-date">${escapeHTML(dateText)}</div>
+            <div class="t-title">${escapeHTML(title)}</div>
+            ${axeLine}
+          </div>
+          <div class="t-actions">
+            <button type="button" class="infoBtn" data-target="${escapeHTML(id)}">Infos</button>
+          </div>
+        </div>
+        <div class="t-details details-block details" data-id="${escapeHTML(id)}" style="display:none;" role="region" aria-label="Détails">
+          ${buildDetailsKVHtml(rec)}
+        </div>
+      `;
+      timelineEl.appendChild(item);
+    }
+
+    attachInfoToggles(timelineEl);
+  }
+
+  function buildCalendarIndex(recs) {
+    calendarIndex = new Map();
+    unscheduled = [];
+
+    for (const rec of recs) {
+      const sISO = get(rec,'start');
+      const eISO = get(rec,'end') || sISO;
+
+      let s = parseISODate(sISO);
+      let e = parseISODate(eISO);
+
+      if (!s && !e) {
+        unscheduled.push(rec);
+        continue;
+      }
+      if (!s) s = e;
+      if (!e) e = s;
+
+      // swap if inverted
+      if (e.getTime() < s.getTime()) {
+        const tmp = s; s = e; e = tmp;
+      }
+
+      for (let d = s; d.getTime() <= e.getTime(); d = addDaysUTC(d, 1)) {
+        const y = d.getUTCFullYear();
+        const iso = isoFromDateUTC(d);
+
+        if (!calendarIndex.has(y)) calendarIndex.set(y, new Map());
+        const byDay = calendarIndex.get(y);
+        if (!byDay.has(iso)) byDay.set(iso, []);
+        byDay.get(iso).push(rec);
+      }
+    }
+  }
+
+  function getAllYears(recs) {
+    const years = new Set();
+    for (const rec of recs) {
+      let y = get(rec,'year');
+      if (!/^\d{4}$/.test(y)) {
+        const d = get(rec,'start') || get(rec,'end');
+        const mm = (d || '').match(/^(\d{4})-/);
+        if (mm) y = mm[1];
+      }
+      if (/^\d{4}$/.test(y)) years.add(parseInt(y, 10));
+    }
+    return Array.from(years).sort((a,b) => a-b);
+  }
+
+  function renderCalendarYear(year) {
+    const byDay = calendarIndex.get(year) || new Map();
+
+    // build months
+    calendarGrid.innerHTML = '';
+    closeModal();
+
+    const dayNames = ['L', 'M', 'M', 'J', 'V', 'S', 'D']; // lundi→dimanche
+
+    for (let month = 0; month < 12; month++) {
+      const first = new Date(Date.UTC(year, month, 1));
+      const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+      const firstDow = (first.getUTCDay() + 6) % 7; // Mon=0 ... Sun=6
+
+      const monthCard = document.createElement('div');
+      monthCard.className = 'month';
+
+      const mh = document.createElement('div');
+      mh.className = 'monthHeader';
+      mh.textContent = fmtMonthYear.format(first);
+      monthCard.appendChild(mh);
+
+      const table = document.createElement('table');
+      table.className = 'monthTable';
+
+      const thead = document.createElement('thead');
+      const hr = document.createElement('tr');
+      for (const dn of dayNames) {
+        const th = document.createElement('th');
+        th.textContent = dn;
+        hr.appendChild(th);
+      }
+      thead.appendChild(hr);
+      table.appendChild(thead);
+
+      const tbodyM = document.createElement('tbody');
+
+      let day = 1;
+      for (let r = 0; r < 6; r++) {
+        const tr = document.createElement('tr');
+
+        for (let c = 0; c < 7; c++) {
+          const td = document.createElement('td');
+
+          const cellIndex = r * 7 + c;
+          if (cellIndex < firstDow || day > daysInMonth) {
+            // empty
+            td.innerHTML = '&nbsp;';
+          } else {
+            const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const evts = byDay.get(iso) || [];
+
+            td.className = 'dayCell' + (evts.length ? ' hasEvents' : '');
+            td.dataset.date = iso;
+
+            if (evts.length) {
+              td.setAttribute('role', 'button');
+              td.tabIndex = 0;
+              td.title = `${evts.length} événement(s)`;
+            }
+
+            const top = document.createElement('div');
+            top.className = 'dayTop';
+
+            const num = document.createElement('div');
+            num.className = 'dayNum';
+            num.textContent = String(day);
+
+            top.appendChild(num);
+
+            if (evts.length) {
+              const dot = document.createElement('span');
+              dot.className = 'dot';
+              dot.title = `${evts.length} événement(s)`;
+              dot.setAttribute('aria-label', `${evts.length} événement(s)`);
+              top.appendChild(dot);
+            }
+
+            td.appendChild(top);
+
+            day++;
+          }
+
+          tr.appendChild(td);
+        }
+
+        tbodyM.appendChild(tr);
+
+        // stop early if the month is done and next row would be empty
+        if (day > daysInMonth) {
+          // but keep row if it already has day cells
+          // (the current loop row always has at least one)
+          // next rows can be omitted
+          if (r >= 4) break;
+        }
+      }
+
+      table.appendChild(tbodyM);
+      monthCard.appendChild(table);
+      calendarGrid.appendChild(monthCard);
+    }
+
+    // bind day click
+    let selectedCell = null;
+    calendarGrid.querySelectorAll('.dayCell.hasEvents').forEach(cell => {
+      const activate = () => {
+        if (selectedCell) selectedCell.classList.remove('selected');
+        selectedCell = cell;
+        selectedCell.classList.add('selected');
+
+        const iso = cell.dataset.date;
+        showDay(year, iso);
+      };
+
+      cell.addEventListener('click', activate);
+      cell.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activate();
+        }
+      });
+    });
+
+    // unscheduled section
+    if (unscheduled.length) {
+      const list = sortRecords(unscheduled);
+      let html = `<strong>Dates à préciser</strong> — ${unscheduled.length} manifestation(s) sans date ISO exploitable pour le calendrier.<br><br>`;
+      html += '<div>';
+      for (const rec of list) {
+        const id = getId(rec);
+        const title = getTitle(rec);
+        const axe = getAxe(rec);
+        const dateText = formatDateRange(get(rec,'start'), get(rec,'end'), get(rec,'dateOriginal'));
+
+        html += `
+          <div class="dayEvent">
+            <div class="dayEventHead">
+              <div>
+                <div class="t-title">${escapeHTML(title)}</div>
+                <div class="dayEventMeta">${escapeHTML(dateText)} • Axe : ${escapeHTML(axe)}</div>
+              </div>
+              <div style="text-align:right;">
+                <button type="button" class="infoBtn" data-target="${escapeHTML(id)}">Infos</button>
+              </div>
+            </div>
+            <div class="details details-block" data-id="${escapeHTML(id)}" style="display:none;">
+              ${buildDetailsKVHtml(rec)}
+            </div>
+          </div>
+        `;
+      }
+      html += '</div>';
+
+      unscheduledEl.innerHTML = html;
+      unscheduledEl.style.display = 'block';
+      attachInfoToggles(unscheduledEl);
+    } else {
+      unscheduledEl.style.display = 'none';
+      unscheduledEl.innerHTML = '';
+    }
+  }
+
+
+  function showDay(year, isoDay) {
+    const byDay = calendarIndex.get(year) || new Map();
+    const list = byDay.get(isoDay) || [];
+
+    const d = parseISODate(isoDay);
+    const label = d ? fmtFull.format(d) : isoDay;
+
+    // remove duplicates (safety)
+    const uniq = [];
+    const seen = new Set();
+    for (const rec of list) {
+      const key = getId(rec);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      uniq.push(rec);
+    }
+
+    const sorted = sortRecords(uniq);
+
+    if (!sorted.length) {
+      openModal(label, `<div class="muted">Aucune manifestation ce jour-là.</div>`);
+      return;
+    }
+
+    let html = '';
+    for (const rec of sorted) {
+      const id = getId(rec);
+      const title = getTitle(rec);
+      const axe = getAxe(rec);
+      const dateText = formatDateRange(get(rec,'start'), get(rec,'end'), get(rec,'dateOriginal'));
+
+      html += `
+        <div class="dayEvent">
+          <div class="dayEventHead">
+            <div>
+              <div class="t-title">${escapeHTML(title)}</div>
+              <div class="dayEventMeta">${escapeHTML(dateText)} • Axe : ${escapeHTML(axe)}</div>
+            </div>
+            <div style="text-align:right;">
+              <button type="button" class="infoBtn" data-target="${escapeHTML(id)}">Infos</button>
+            </div>
+          </div>
+          <div class="details details-block" data-id="${escapeHTML(id)}" style="display:none;">
+            ${buildDetailsKVHtml(rec)}
+          </div>
+        </div>
+      `;
+    }
+
+    openModal(`${label} — ${sorted.length} manifestation(s)`, html);
+  }
+
+  function renderCurrentView() {
+    if (!records.length) return;
+
+    const sorted = sortRecords(records);
+
+    if (currentView === 'list') {
+      renderTable(sorted);
+    } else if (currentView === 'timeline') {
+      renderTimeline(sorted);
+    } else if (currentView === 'calendar') {
+      // calendar rendered separately
+      const years = getAllYears(records);
+      const year = parseInt(calendarYearSel.value || (years[0] ?? new Date().getFullYear()), 10);
+      renderCalendarYear(year);
+    }
+
+    setActiveButton(sortKey);
+    renderSortArrows();
+  }
+
+  // ---------- CSV loading ----------
   // Robust CSV parser (handles quotes + commas + CRLF)
   function parseCSV(text) {
     const rows = [];
@@ -279,246 +1240,101 @@
     return { headers, data };
   }
 
-  function parseISODate(iso) {
-    if (!iso) return null;
-    const d = new Date(iso + 'T00:00:00');
-    return isNaN(d) ? null : d;
-  }
-
-  const fmtFull = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-  const fmtMonthYear = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
-
-  function formatDateRange(startISO, endISO, fallbackText) {
-    const d1 = parseISODate(startISO);
-    const d2 = parseISODate(endISO);
-
-    if (d1 && d2) {
-      if (startISO === endISO) return fmtFull.format(d1);
-      const sameMonth = d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear();
-      if (sameMonth) {
-        return `${d1.getDate()}–${d2.getDate()} ${fmtMonthYear.format(d1)}`;
-      }
-      return `${fmtFull.format(d1)} – ${fmtFull.format(d2)}`;
-    }
-    if (d1) return fmtFull.format(d1);
-    if (fallbackText) return fallbackText;
-    return 'Date à préciser';
-  }
-
-  function norm(s) {
-    return (s ?? '').toString().trim().toLocaleLowerCase('fr-FR');
-  }
-
-  function dateSortKey(rec) {
-    const d = parseISODate(rec['Date début']) || parseISODate(rec['Date fin']);
-    return d ? d.getTime() : Number.POSITIVE_INFINITY;
-  }
-
-  function getTitle(rec) {
-    return rec['Manifestation (nom)'] || rec['Thématique / titre complet'] || '(Sans titre)';
-  }
-
-  function setActiveButton(key) {
-    // visual state
-    const all = [btnDate, btnTitle, btnAxe];
-    all.forEach(b => b.classList.remove('active'));
-    btnDate.setAttribute('aria-pressed', 'false');
-    btnTitle.setAttribute('aria-pressed', 'false');
-    btnAxe.setAttribute('aria-pressed', 'false');
-
-    if (key === 'date') { btnDate.classList.add('active'); btnDate.setAttribute('aria-pressed', 'true'); }
-    if (key === 'title') { btnTitle.classList.add('active'); btnTitle.setAttribute('aria-pressed', 'true'); }
-    if (key === 'axe') { btnAxe.classList.add('active'); btnAxe.setAttribute('aria-pressed', 'true'); }
-  }
-
-  function renderSortArrows() {
-    arrowDate.textContent = '';
-    arrowTitle.textContent = '';
-    arrowAxe.textContent = '';
-
-    const arrow = sortDir === 1 ? '↑' : '↓';
-    if (sortKey === 'date') arrowDate.textContent = arrow;
-    if (sortKey === 'title') arrowTitle.textContent = arrow;
-    if (sortKey === 'axe') arrowAxe.textContent = arrow;
-  }
-
-  function sortAndRender() {
-    const sorted = [...records];
-
-    sorted.sort((a, b) => {
-      let cmp = 0;
-      if (sortKey === 'date') {
-        cmp = dateSortKey(a) - dateSortKey(b);
-      } else if (sortKey === 'title') {
-        cmp = norm(getTitle(a)).localeCompare(norm(getTitle(b)), 'fr');
-      } else if (sortKey === 'axe') {
-        cmp = norm(a['Axe']).localeCompare(norm(b['Axe']), 'fr');
-        if (cmp === 0) cmp = norm(getTitle(a)).localeCompare(norm(getTitle(b)), 'fr');
-      }
-      return cmp * sortDir;
-    });
-
-    renderTable(sorted);
-    setActiveButton(sortKey);
-    renderSortArrows();
-  }
-
-  function renderTable(list) {
-    tbody.innerHTML = '';
-
-    for (const rec of list) {
-      const id = escapeHTML(rec['ID'] || (rec['Manifestation (nom)'] + '|' + rec['Date début'] + '|' + rec['Axe']));
-      const dateText = formatDateRange(rec['Date début'], rec['Date fin'], rec['Date (texte original)']);
-      const title = getTitle(rec);
-      const axe = rec['Axe'] || '—';
-
-      const details = {
-        'Type': rec['Type'],
-        'Thématique / titre complet': rec['Thématique / titre complet'],
-        'Date (texte original)': rec['Date (texte original)'],
-        'Horaire': rec['Horaire (si précisé)'],
-        'Ville': rec['Ville'],
-        'Pays': rec['Pays'],
-        'Institution / lieu': rec['Institution / lieu'],
-        'Implication de Paragraphe': rec['Implication de Paragraphe'],
-        'Partenaires / co-organisateurs': rec['Partenaires / co-organisateurs'],
-        'Organisateurs (personnes)': rec['Organisateurs (personnes)'],
-        'Participants / intervenants': rec['Participants / intervenants'],
-        'Projet / cadre': rec['Projet / cadre'],
-        'URL': rec['URL'],
-        'Notes / statut': rec['Notes / statut'],
-        'Source': rec['Source (réponse)'],
-      };
-
-      const summaryTr = document.createElement('tr');
-      summaryTr.className = 'summary-row';
-      summaryTr.innerHTML = `
-        <td class="col-date">${escapeHTML(dateText)}</td>
-        <td class="col-title"><div class="title">${escapeHTML(title)}</div></td>
-        <td class="col-axe">${escapeHTML(axe)}</td>
-        <td class="col-actions">
-          <button type="button" class="infoBtn" data-target="${id}">Infos</button>
-        </td>
-      `;
-
-      const detailsTr = document.createElement('tr');
-      detailsTr.className = 'details-row';
-      detailsTr.dataset.id = id;
-      detailsTr.style.display = 'none';
-
-      let kvHtml = '<div class="kv">';
-      for (const [k, vRaw] of Object.entries(details)) {
-        const v = (vRaw ?? '').toString().trim();
-        if (!v) continue;
-
-        let vHtml = escapeHTML(v);
-        if (k === 'URL') {
-          const safeUrl = v;
-          vHtml = `<a href="${escapeHTML(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHTML(safeUrl)}</a>`;
-        }
-        kvHtml += `<div class="k">${escapeHTML(k)}</div><div class="v">${vHtml}</div>`;
-      }
-      kvHtml += '</div>';
-
-      detailsTr.innerHTML = `
-        <td colspan="4">
-          <div class="details" role="region" aria-label="Détails">
-            ${kvHtml || '<span class="muted">Aucun détail renseigné.</span>'}
-          </div>
-        </td>
-      `;
-
-      tbody.appendChild(summaryTr);
-      tbody.appendChild(detailsTr);
-    }
-
-    // attach toggle handlers
-    tbody.querySelectorAll('.infoBtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target');
-        const detailRow = tbody.querySelector(`tr.details-row[data-id="${CSS.escape(targetId)}"]`);
-        if (!detailRow) return;
-
-        const isOpen = detailRow.style.display !== 'none';
-        detailRow.style.display = isOpen ? 'none' : 'table-row';
-        btn.textContent = isOpen ? 'Infos' : 'Fermer';
-      });
-    });
-  }
-
   async function loadCSV() {
     let csvText = '';
-    let usedFallback = false;
+    let usedEmbedded = false;
 
     try {
-      const resp = await fetch(GOOGLE_CSV_URL, { cache: 'no-store' });
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      csvText = await resp.text();
+      const res = await fetch(GOOGLE_CSV_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      csvText = await res.text();
     } catch (e) {
-      usedFallback = true;
+      usedEmbedded = true;
       csvText = EMBEDDED_CSV;
     }
 
     const parsed = parseCSV(csvText);
-    let data = parsed.data || [];
+    headers = parsed.headers;
+    records = parsed.data;
 
-    records = data;
+    fieldMap = buildFieldMap(headers);
 
-    // Update the year pill (e.g., "2026" or "2026–2027") based on the dataset
+    // year pill like "2026–2027"
     const yearPill = document.getElementById('yearPill');
     if (yearPill) {
-      const years = new Set();
-      for (const rec of records) {
-        let y = (rec['Année'] || '').toString().trim();
-        if (!/^\d{4}$/.test(y)) {
-          const d = (rec['Date début'] || rec['Date fin'] || '').toString().trim();
-          const mm = d.match(/^(\d{4})-/);
-          if (mm) y = mm[1];
-        }
-        if (/^\d{4}$/.test(y)) years.add(parseInt(y, 10));
-      }
-
-      if (years.size) {
-        const ys = Array.from(years).sort((a,b) => a-b);
-        const label = (ys.length === 1) ? String(ys[0]) : `${ys[0]}–${ys[ys.length - 1]}`;
+      const years = getAllYears(records);
+      if (years.length) {
+        const label = years.length === 1 ? String(years[0]) : `${years[0]}–${years[years.length - 1]}`;
         yearPill.textContent = label;
-        document.title = `Manifestations scientifiques – Paragraphe (${label})`;
       } else {
-        yearPill.style.display = 'none';
+        yearPill.textContent = '—';
       }
     }
 
-    const loadedMsg = usedFallback
-      ? 'Chargement depuis la copie intégrée (le navigateur a bloqué ou échoué sur le CSV Google Sheets).'
+    // calendar
+    buildCalendarIndex(records);
+    const years = getAllYears(records);
+    calendarYearSel.innerHTML = '';
+    for (const y of years) {
+      const opt = document.createElement('option');
+      opt.value = String(y);
+      opt.textContent = String(y);
+      calendarYearSel.appendChild(opt);
+    }
+    // default: earliest year (typically 2026)
+    if (years.length) calendarYearSel.value = String(years[0]);
+
+    calendarYearSel.addEventListener('change', () => {
+      if (currentView === 'calendar') renderCurrentView();
+    });
+
+    const loadedMsg = usedEmbedded
+      ? 'Chargement depuis Google Sheets impossible (utilisation de la copie intégrée).'
       : 'Chargement depuis Google Sheets réussi.';
 
     statusEl.innerHTML = `
       ${escapeHTML(loadedMsg)} • ${records.length} manifestation(s) • Dernière mise à jour : ${new Date().toLocaleString('fr-FR')}
     `;
 
-    sortAndRender();
+    renderCurrentView();
   }
 
-  function bindSortButtons() {
-    function setSort(key) {
+  // ---------- Controls ----------
+  function bindSortButton(btn, key) {
+    btn.addEventListener('click', () => {
       if (sortKey === key) {
-        sortDir *= -1;  // toggle direction
+        sortDir *= -1;
       } else {
         sortKey = key;
-        sortDir = 1;    // reset to ascending
+        sortDir = 1;
       }
-      sortAndRender();
-    }
-
-    btnDate.addEventListener('click', () => setSort('date'));
-    btnTitle.addEventListener('click', () => setSort('title'));
-    btnAxe.addEventListener('click', () => setSort('axe'));
+      renderCurrentView();
+    });
   }
 
-  bindSortButtons();
-  loadCSV().catch(err => {
-    statusEl.innerHTML = `<span class="error">Erreur : ${escapeHTML(err?.message || String(err))}</span>`;
-  });
+  function setView(view) {
+    closeModal();
+    currentView = view;
+
+    viewList.style.display = (view === 'list') ? 'block' : 'none';
+    viewTimeline.style.display = (view === 'timeline') ? 'block' : 'none';
+    viewCalendar.style.display = (view === 'calendar') ? 'block' : 'none';
+
+    // sorting is meaningful for list + timeline; calendar has its own structure
+    sortGroup.style.display = (view === 'calendar') ? 'none' : 'flex';
+
+    renderCurrentView();
+  }
+
+  viewSelect.addEventListener('change', () => setView(viewSelect.value));
+
+  bindSortButton(btnDate, 'date');
+  bindSortButton(btnTitle, 'title');
+  bindSortButton(btnAxe, 'axe');
+
+  // init
+  setView('list');
+  loadCSV();
 })();
 </script>
 </body>
