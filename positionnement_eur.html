@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Laboratoire Paragraphe — Positionnement Paragraphe × EUR — v7</title>
+  <title>Laboratoire Paragraphe — Positionnement Paragraphe × EUR — v8</title>
   <style>
     :root {
       --bg: #EE474F;
@@ -270,14 +270,35 @@
     .sidebar .card-actions { gap: 5px; margin-top: 7px; }
     .sidebar button.tiny { padding: 5px 6px; font-size: 11px; border-radius: 8px; }
     .sidebar .card.reservoir-card {
-      box-shadow: 0 10px 22px rgba(0,0,0,.16), 0 1px 0 rgba(255,255,255,.9) inset;
+      position: relative;
+      border-width: 2px 2px 2px 8px;
+      border-style: solid;
+      border-color: rgba(18,18,18,.20);
+      border-left-color: var(--button);
+      outline: 2px dashed rgba(192,22,22,.34);
+      outline-offset: -7px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.18), 0 1px 0 rgba(255,255,255,.92) inset;
       cursor: grab;
-      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+      user-select: none;
+      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease, outline-color .14s ease;
+    }
+    .sidebar .card.reservoir-card::before {
+      content: "⋮⋮";
+      position: absolute;
+      top: 6px;
+      right: 7px;
+      color: rgba(18,18,18,.32);
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: -3px;
+      pointer-events: none;
     }
     .sidebar .card.reservoir-card:hover {
-      box-shadow: 0 16px 32px rgba(0,0,0,.22), 0 1px 0 rgba(255,255,255,.95) inset;
-      transform: translateY(-1px);
-      border-color: rgba(18,18,18,.26);
+      box-shadow: 0 18px 36px rgba(0,0,0,.24), 0 1px 0 rgba(255,255,255,.96) inset;
+      transform: translateY(-2px);
+      border-color: rgba(18,18,18,.36);
+      border-left-color: var(--button-hover);
+      outline-color: rgba(192,22,22,.62);
     }
     .sidebar .card.reservoir-card:active { cursor: grabbing; transform: translateY(0); }
     .add-eur-select {
@@ -453,6 +474,41 @@
     .field { display: flex; flex-direction: column; gap: 5px; }
     .field.full { grid-column: 1 / -1; }
     .field label { font-size: 12px; color: var(--muted); font-weight: 750; }
+    .example-help {
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.35;
+      background: rgba(255,255,255,.78);
+      border-left: 3px solid rgba(192,22,22,.32);
+      padding: 5px 7px;
+    }
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .checkbox-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 10px;
+      border: 1px solid rgba(18,18,18,.15);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .checkbox-pill input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      accent-color: var(--button);
+      cursor: pointer;
+    }
+    .checkbox-pill:has(input:checked) {
+      border-color: var(--button);
+      box-shadow: 0 0 0 3px rgba(192,22,22,.10);
+    }
     .modal-foot {
       padding: 14px 20px;
       border-top: 1px solid var(--line);
@@ -498,7 +554,7 @@
       .topbar, .board-head, .modal-foot { flex-direction: column; align-items: stretch; }
       .top-subtitle { text-align: left; }
       .app { padding: 12px; }
-      .inline-controls, .button-grid { grid-template-columns: 1fr; }
+      .inline-controls, .button-grid, .checkbox-grid { grid-template-columns: 1fr; }
       .modal-body { grid-template-columns: 1fr; }
     }
   </style>
@@ -621,6 +677,21 @@ const SELECTS = {
   statut: ['Proposé','À discuter','Validé','À arbitrer'],
   priorite: ['Haute','Moyenne','Basse']
 };
+const MASTER_OPTIONS = ['CEN','ACEHN','NET','MSI'];
+const PLACEHOLDERS = {
+  titre: 'Ex. Séminaire interdisciplinaire sur les controverses numériques',
+  type_contribution: 'Ex. Projet scientifique / formation / partenariat / vigilance',
+  role_labo: 'Ex. Pilote, contributeur, expertise ponctuelle, veille, arbitrage collectif…',
+  masters_concernes: 'Sélectionner un ou plusieurs masters : CEN, ACEHN, NET, MSI.',
+  collegues_referents: 'Ex. Noms des collègues volontaires ou pressentis',
+  ressources_preuves: 'Ex. Projet, séminaire, publication, plateforme, terrain, prototype ou corpus mobilisable',
+  partenaires: 'Ex. Partenaires académiques, publics, associatifs ou socio-économiques',
+  continuum: 'Ex. Action Licence-Master, atelier doctoral, école d’été, laboratoire junior…',
+  international: 'Ex. Mobilité, partenariat international, dimension interculturelle ou réseau européen',
+  commentaire: 'Ex. Argument de positionnement, point de vigilance ou arbitrage à discuter',
+  tags: 'Ex. numérique;création;données;formation'
+};
+const PROMPT_VALUES = new Set(['À renseigner','À préciser','Masters concernés à renseigner','Collègues à renseigner','Partenaires à renseigner','Éléments à documenter','Actions pédagogiques à préciser']);
 const HELP = {
   carte: {
     title: 'Qu’est-ce qu’une carte ?',
@@ -644,7 +715,7 @@ const DEMO = [
     "eur_cible": "À classer",
     "niveau_convergence": "Fort / portage possible",
     "role_labo": "Contributeur ou pilote à discuter",
-    "masters_concernes": "Masters concernés à renseigner",
+    "masters_concernes": "",
     "collegues_referents": "Collègues à renseigner",
     "ressources_preuves": "Projets, séminaires, publications ou plateformes à documenter",
     "partenaires": "Partenaires académiques, publics ou socio-économiques à renseigner",
@@ -664,7 +735,7 @@ const DEMO = [
     "eur_cible": "À classer",
     "niveau_convergence": "Contributif",
     "role_labo": "Contributeur",
-    "masters_concernes": "Masters concernés à renseigner",
+    "masters_concernes": "",
     "collegues_referents": "Collègues à renseigner",
     "ressources_preuves": "Dispositifs numériques, corpus, enquêtes ou prototypes à documenter",
     "partenaires": "Partenaires à renseigner",
@@ -684,7 +755,7 @@ const DEMO = [
     "eur_cible": "À classer",
     "niveau_convergence": "Exploratoire",
     "role_labo": "Veille / contribution ponctuelle",
-    "masters_concernes": "Masters concernés à renseigner",
+    "masters_concernes": "",
     "collegues_referents": "Collègues à renseigner",
     "ressources_preuves": "Terrains, séminaires ou enseignements à documenter",
     "partenaires": "Partenaires à renseigner",
@@ -704,7 +775,7 @@ const DEMO = [
     "eur_cible": "À classer",
     "niveau_convergence": "Contributif",
     "role_labo": "Contributeur",
-    "masters_concernes": "Masters concernés à renseigner",
+    "masters_concernes": "",
     "collegues_referents": "Collègues à renseigner",
     "ressources_preuves": "Recherches, expertises, ateliers ou publications à documenter",
     "partenaires": "Partenaires publics ou socio-économiques à renseigner",
@@ -724,7 +795,7 @@ const DEMO = [
     "eur_cible": "À classer",
     "niveau_convergence": "Vigilance",
     "role_labo": "Arbitrage collectif",
-    "masters_concernes": "À renseigner",
+    "masters_concernes": "",
     "collegues_referents": "À renseigner",
     "ressources_preuves": "Éléments à documenter",
     "partenaires": "À renseigner",
@@ -742,6 +813,8 @@ let editingId = null;
 
 function loadState(){
   try {
+    const savedV8 = localStorage.getItem('paragraphe_eur_cards_v8');
+    if(savedV8) return normalizeCards(JSON.parse(savedV8));
     const savedV7 = localStorage.getItem('paragraphe_eur_cards_v7');
     if(savedV7) return normalizeCards(JSON.parse(savedV7));
     const savedV6 = localStorage.getItem('paragraphe_eur_cards_v6');
@@ -780,9 +853,28 @@ function migrateDefaultCards(list){
     return isDefaultExample ? {...c, eur_cible: RESERVOIR_ID} : c;
   });
 }
-function saveState(){ localStorage.setItem('paragraphe_eur_cards_v7', JSON.stringify(cards)); }
+function saveState(){ localStorage.setItem('paragraphe_eur_cards_v8', JSON.stringify(cards)); }
 function uid(){ return 'C' + Math.random().toString(36).slice(2,8).toUpperCase(); }
 function today(){ return new Date().toISOString().slice(0,10); }
+function isDefaultExampleCard(c){ return /^C00[1-5]$/.test(c && c.id || '') && String(c && c.titre || '').startsWith('Carte exemple'); }
+function isPromptValue(v){ return PROMPT_VALUES.has(String(v || '').trim()); }
+function editorValueFor(f, c){
+  const v = c && c[f] != null ? String(c[f]) : '';
+  if(['id','date_mise_a_jour'].includes(f)) return v;
+  if(SELECTS[f]) return v;
+  return (isDefaultExampleCard(c) || isPromptValue(v)) ? '' : v;
+}
+function masterValues(value){
+  const tokens = String(value || '').split(/[;,|/\s]+/).map(x => x.trim().toUpperCase()).filter(Boolean);
+  return MASTER_OPTIONS.filter(m => tokens.includes(m));
+}
+function addExampleHelp(container, text){
+  if(!text) return;
+  const help = document.createElement('div');
+  help.className = 'example-help';
+  help.textContent = text;
+  container.appendChild(help);
+}
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 function convergenceScore(level){ if((level||'').startsWith('Fort')) return 3; if((level||'').startsWith('Contributif')) return 2; if((level||'').startsWith('Exploratoire')) return 1; return 0; }
 function levelClass(level){ if((level||'').startsWith('Fort')) return 'level-strong'; if((level||'').startsWith('Contributif')) return 'level-mid'; if((level||'').startsWith('Exploratoire')) return 'level-low'; return 'level-watch'; }
@@ -915,21 +1007,48 @@ function duplicateCard(id){
 function openEditor(id){
   editingId = id;
   const c = cards.find(x=>x.id===id); if(!c) return;
-  document.getElementById('editorTitle').textContent = c.titre || 'Éditer une carte';
+  document.getElementById('editorTitle').textContent = c.titre || 'Nouvelle carte';
   const body = document.getElementById('modalBody'); body.innerHTML = '';
   FIELDS.forEach(f => {
     const div = document.createElement('div'); div.className = ['commentaire','ressources_preuves','masters_concernes','partenaires','continuum','international'].includes(f) ? 'field full' : 'field';
     const label = document.createElement('label'); label.textContent = LABELS[f] || f; div.appendChild(label);
     let input;
+    if(f === 'masters_concernes') {
+      const selected = masterValues(c[f]);
+      const grid = document.createElement('div');
+      grid.className = 'checkbox-grid';
+      MASTER_OPTIONS.forEach(m => {
+        const item = document.createElement('label');
+        item.className = 'checkbox-pill';
+        const box = document.createElement('input');
+        box.type = 'checkbox'; box.name = f; box.value = m; box.checked = selected.includes(m);
+        const span = document.createElement('span'); span.textContent = m;
+        item.appendChild(box); item.appendChild(span); grid.appendChild(item);
+      });
+      div.appendChild(grid);
+      addExampleHelp(div, PLACEHOLDERS[f]);
+      body.appendChild(div);
+      return;
+    }
     if(SELECTS[f]) {
       input = document.createElement('select');
       const values = SELECTS[f].slice();
       if(c[f] && !values.includes(c[f])) values.unshift(c[f]);
       values.forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=(f === 'eur_cible' ? (TARGET_LABELS[v] || v) : v); input.appendChild(o); });
+      input.name = f; input.value = c[f] || '';
     }
-    else if(['commentaire','ressources_preuves','partenaires','continuum','international','masters_concernes'].includes(f)) { input = document.createElement('textarea'); }
-    else { input = document.createElement('input'); input.type = f==='date_mise_a_jour' ? 'date' : 'text'; }
-    input.name = f; input.value = c[f] || ''; if(f==='id') input.readOnly = true; div.appendChild(input); body.appendChild(div);
+    else if(['commentaire','ressources_preuves','partenaires','continuum','international'].includes(f)) {
+      input = document.createElement('textarea');
+      input.name = f; input.value = editorValueFor(f, c); input.placeholder = PLACEHOLDERS[f] || '';
+    }
+    else {
+      input = document.createElement('input'); input.type = f==='date_mise_a_jour' ? 'date' : 'text';
+      input.name = f; input.value = editorValueFor(f, c); input.placeholder = PLACEHOLDERS[f] || '';
+    }
+    if(f==='id') input.readOnly = true;
+    div.appendChild(input);
+    if(PLACEHOLDERS[f] && !['id','date_mise_a_jour'].includes(f)) addExampleHelp(div, `Exemple : ${PLACEHOLDERS[f]}`);
+    body.appendChild(div);
   });
   document.getElementById('editor').showModal();
 }
@@ -937,7 +1056,9 @@ function saveEditor(ev){
   ev.preventDefault();
   const c = cards.find(x=>x.id===editingId); if(!c) return;
   const fd = new FormData(document.getElementById('editorForm'));
-  FIELDS.forEach(f => c[f] = fd.get(f) || '');
+  FIELDS.forEach(f => {
+    c[f] = f === 'masters_concernes' ? fd.getAll(f).filter(Boolean).join('; ') : (fd.get(f) || '');
+  });
   if(!ALL_TARGETS.includes(c.eur_cible)) c.eur_cible = RESERVOIR_ID;
   if(!c.date_mise_a_jour) c.date_mise_a_jour = today();
   saveState(); document.getElementById('editor').close(); render(); toast('Carte enregistrée');
@@ -945,7 +1066,7 @@ function saveEditor(ev){
 function addCard(){
   const c = Object.fromEntries(FIELDS.map(f=>[f,'']));
   const selectedAxis = document.getElementById('filterAxe') ? document.getElementById('filterAxe').value : '';
-  c.id=uid(); c.titre='Nouvelle carte'; c.axe_paragraphe=selectedAxis || 'À préciser'; c.eur_cible=RESERVOIR_ID; c.niveau_convergence='Exploratoire'; c.statut='Proposé'; c.priorite='Moyenne'; c.date_mise_a_jour=today();
+  c.id=uid(); c.titre=''; c.axe_paragraphe=selectedAxis || 'À préciser'; c.eur_cible=RESERVOIR_ID; c.niveau_convergence='Exploratoire'; c.statut='Proposé'; c.priorite='Moyenne'; c.date_mise_a_jour=today();
   cards.push(c); saveState(); render(); openEditor(c.id);
 }
 function deleteEditing(){
@@ -960,7 +1081,7 @@ function clearFilters(){
   render();
 }
 function exportCSV(){ downloadFile('eur_positionnement_export.csv', toCSV(cards), 'text/csv;charset=utf-8'); }
-function exportJSON(){ downloadFile('eur_positionnement_export.json', JSON.stringify({version:'1.7', exported_at:new Date().toISOString(), reservoir_value: RESERVOIR_ID, axes_labo: AXES_LABO, cards}, null, 2), 'application/json;charset=utf-8'); }
+function exportJSON(){ downloadFile('eur_positionnement_export.json', JSON.stringify({version:'1.8', exported_at:new Date().toISOString(), reservoir_value: RESERVOIR_ID, axes_labo: AXES_LABO, cards}, null, 2), 'application/json;charset=utf-8'); }
 function downloadFile(name, content, type){ const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
 function toCSV(rows){
   const lines=[FIELDS.join(',')];
