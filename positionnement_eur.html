@@ -23,9 +23,13 @@
       --danger: #b91c1c;
     }
     * { box-sizing: border-box; }
-    html, body { min-height: 100%; }
+    html, body { height: 100%; overflow: hidden; }
     body {
       margin: 0;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--ink);
@@ -38,8 +42,8 @@
       justify-content: space-between;
       align-items: center;
       gap: 18px;
-      position: sticky;
-      top: 0;
+      position: relative;
+      flex: 0 0 auto;
       z-index: 20;
       box-shadow: 0 8px 24px rgba(0,0,0,.22);
     }
@@ -59,7 +63,10 @@
       grid-template-columns: 390px minmax(0, 1fr);
       gap: 18px;
       padding: 18px;
-      min-height: calc(100vh - 72px);
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto;
+      overflow: hidden;
     }
     .sidebar, .board-head, .eur-column {
       background: rgba(255,255,255,.94);
@@ -70,20 +77,24 @@
     .sidebar {
       display: flex;
       flex-direction: column;
-      max-height: calc(100vh - 108px);
-      min-height: 620px;
-      position: sticky;
-      top: 90px;
-      overflow: hidden;
+      height: auto;
+      min-height: 0;
+      position: static;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      font-size: 13px;
     }
     .sidebar-head {
-      padding: 18px 18px 14px;
+      padding: 14px 14px 10px;
       border-bottom: 1px solid var(--line);
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 12px;
+      gap: 10px;
       align-items: start;
       background: var(--panel);
+      flex: 0 0 auto;
     }
     h1, h2, h3, p { margin-top: 0; }
     h1 { margin-bottom: 6px; font-size: 22px; letter-spacing: -.02em; line-height: 1.15; }
@@ -104,12 +115,13 @@
       vertical-align: 2px;
     }
     .controls {
-      padding: 14px 18px 12px;
+      padding: 11px 14px 10px;
       border-bottom: 1px solid var(--line);
       background: var(--panel-soft);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      flex: 0 0 auto;
     }
     .fieldline { display: flex; flex-direction: column; gap: 5px; }
     .fieldline label, .field-label {
@@ -177,13 +189,37 @@
     }
     input[type="file"] { display: none; }
     .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .reservoir-note {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      flex: 0 0 auto;
+    }
+    .reservoir-note strong { color: var(--ink); }
+    .format-note {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: start;
+      padding: 8px;
+      border: 1px solid rgba(192,22,22,.22);
+      background: #fff;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    .format-note strong { color: var(--ink); }
     .reservoir-list {
-      flex: 1;
-      overflow: auto;
-      padding: 14px;
+      flex: 0 0 auto;
+      min-height: 220px;
+      overflow: visible;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       background: #fff;
     }
     .reservoir-list.dragover, .dropzone.dragover {
@@ -191,11 +227,34 @@
       outline-offset: -9px;
       background: #fff2f2;
     }
+    .sidebar h1 { font-size: 18px; line-height: 1.12; margin-bottom: 4px; }
+    .sidebar .hint { font-size: 11.5px; line-height: 1.35; }
+    .sidebar .count-pill { min-width: 28px; padding: 2px 7px; font-size: 11px; vertical-align: 1px; }
+    .sidebar .fieldline { gap: 4px; }
+    .sidebar .fieldline label, .sidebar .field-label { font-size: 11px; }
+    .sidebar input, .sidebar select, .sidebar textarea { padding: 8px 9px; border-radius: 9px; font-size: 12.5px; }
+    .sidebar button, .sidebar .filebtn { padding: 8px 9px; border-radius: 9px; font-size: 12.5px; }
+    .sidebar button.help-btn { width: 27px; height: 27px; padding: 0; border-radius: 999px; font-size: 12px; }
+    .sidebar .button-grid { gap: 7px; }
+    .sidebar .card { padding: 8px 9px; box-shadow: 0 3px 10px rgba(0,0,0,.07); }
+    .sidebar .card h3 { font-size: 12.5px; line-height: 1.22; }
+    .sidebar .card .meta { margin-top: 5px; font-size: 11px; line-height: 1.28; }
+    .sidebar .chips { gap: 4px; margin-top: 7px; }
+    .sidebar .chip { font-size: 10px; padding: 3px 5px; }
+    .sidebar .card-actions { gap: 5px; margin-top: 7px; }
+    .sidebar button.tiny { padding: 5px 6px; font-size: 11px; border-radius: 8px; }
+
     .board {
       min-width: 0;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      padding-right: 4px;
     }
     .board-head {
       padding: 18px;
@@ -216,16 +275,37 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      background: var(--eur-bg, rgba(255,255,255,.94));
+      border-color: var(--eur-border, rgba(255,255,255,.65));
     }
     .colhead {
       padding: 15px 16px;
-      border-bottom: 1px solid var(--line);
-      background: var(--panel);
+      border-bottom: 1px solid rgba(18,18,18,.16);
+      background: var(--eur-head, var(--panel));
     }
     .coltitle {
       font-weight: 850;
       line-height: 1.2;
       margin-bottom: 7px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .eur-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      min-width: 50px;
+      padding: 4px 7px;
+      background: #000;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      line-height: 1;
     }
     .coldesc, .colmeta {
       color: var(--muted);
@@ -240,16 +320,21 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      background: #fffafa;
+      background: var(--eur-bg, #fffafa);
     }
     .card {
       background: #fff;
       border: 1px solid var(--line);
       border-left: 6px solid var(--button);
-      border-radius: 15px;
+      border-radius: 0;
       padding: 11px 12px 10px;
       box-shadow: 0 5px 15px rgba(0,0,0,.08);
       cursor: grab;
+    }
+    .card.eur-card {
+      border-color: var(--card-border, var(--button));
+      border-left-color: var(--card-border, var(--button));
+      border-left-width: 7px;
     }
     .card:active { cursor: grabbing; }
     .card h3 { margin: 0; font-size: 14px; line-height: 1.28; }
@@ -350,9 +435,11 @@
       .eur-grid { grid-template-columns: repeat(4, minmax(260px, 1fr)); }
     }
     @media (max-width: 1050px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { position: static; max-height: none; min-height: 0; }
-      .reservoir-list { max-height: 420px; }
+      html, body { height: auto; min-height: 100%; overflow: auto; }
+      body { min-height: 100dvh; display: block; }
+      .app { grid-template-columns: 1fr; height: auto; min-height: auto; overflow: visible; }
+      .sidebar, .board { position: static; height: auto; max-height: none; min-height: 0; overflow: visible; }
+      .reservoir-list { min-height: 220px; max-height: none; overflow: visible; }
       .eur-grid { grid-template-columns: 1fr; }
       .topbar { position: static; }
     }
@@ -376,7 +463,7 @@
       <div class="sidebar-head">
         <div>
           <h1>Réservoir des cartes <span class="count-pill" id="reservoirCount">0</span></h1>
-          <p class="hint">Cartes non encore positionnées dans une EUR. Déposer une carte ici pour la remettre à arbitrer.</p>
+          <p class="hint">Cartes non encore positionnées dans une EUR. Double-cliquez une carte pour l’éditer ; glissez-la vers une EUR pour la positionner. Le panneau gauche défile indépendamment du tableau.</p>
         </div>
         <button class="help-btn" type="button" data-help="carte" aria-label="Qu’est-ce qu’une carte ?">?</button>
       </div>
@@ -384,7 +471,12 @@
       <section class="controls" aria-label="Contrôles">
         <div class="fieldline">
           <label for="search">Filtrer</label>
-          <input type="search" id="search" placeholder="Axe, titre, collègue, master, tag…" />
+          <input type="search" id="search" placeholder="Titre, collègue, master, tag…" />
+        </div>
+
+        <div class="fieldline">
+          <label for="filterAxe">Axe du labo</label>
+          <select id="filterAxe"><option value="">Tous axes</option></select>
         </div>
 
         <div class="inline-controls">
@@ -403,6 +495,11 @@
 
         <button class="primary" id="addCard" type="button">+ Nouvelle carte</button>
 
+        <div class="format-note">
+          <div><strong>CSV</strong> = partage et correction en tableur. <strong>JSON</strong> = sauvegarde complète de l’état de l’interface.</div>
+          <button class="help-btn" type="button" data-help="formats" aria-label="À quoi servent le CSV et le JSON ?">?</button>
+        </div>
+
         <div class="button-grid">
           <label class="filebtn secondary" for="csvInput">Importer CSV</label><input id="csvInput" type="file" accept=".csv,text/csv" />
           <label class="filebtn secondary" for="jsonInput">Importer JSON</label><input id="jsonInput" type="file" accept=".json,application/json" />
@@ -412,6 +509,8 @@
         <button class="secondary" id="resetDemo" type="button">Réinitialiser l’exemple</button>
       </section>
 
+      <div class="reservoir-note"><strong>Astuce :</strong> double-cliquez une carte pour ouvrir l’éditeur ; utilisez “Dupliquer” si la même contribution doit être placée dans plusieurs EUR.</div>
+
       <section class="reservoir-list" id="reservoirList" aria-label="Réservoir des cartes"></section>
     </aside>
 
@@ -419,7 +518,7 @@
       <section class="board-head">
         <div>
           <h2>Positionnement dans les 4 EUR</h2>
-          <p class="hint">Glissez les cartes depuis le réservoir vers une EUR. Pour une même contribution dans plusieurs EUR, dupliquez la carte puis positionnez la copie.</p>
+          <p class="hint">Glissez les cartes depuis le réservoir vers une EUR. Pour une même contribution dans plusieurs EUR, dupliquez la carte puis positionnez la copie. Le tableau de droite défile indépendamment du réservoir.</p>
         </div>
         <div class="board-tools">
           <button class="secondary" id="clearFilters" type="button">Réinitialiser les filtres</button>
@@ -451,17 +550,21 @@
 <script>
 const RESERVOIR_ID = 'À classer';
 const EURS = [
-  {id:'Arts, créations & technologies, industries culturelles', title:'Arts, créations & technologies, industries culturelles', desc:'Continuité ArTeC, création, technologies, industries culturelles'},
-  {id:'Transitions numérique, écologique et économique', title:'Transitions numérique, écologique et économique', desc:'Transitions numériques, écologiques et économiques, méthodes, environnements, données'},
-  {id:'Prendre soin : santé, langage & subjectivité, vulnérabilités et agentivités, handicap, migrations, éducation & formation', title:'Prendre soin', desc:'Santé, langage, subjectivité, vulnérabilités, agentivités, handicap, migrations, éducation'},
-  {id:'Enjeux démocratiques : citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit', title:'Enjeux démocratiques', desc:'Citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit'}
+  {number:1, id:'Arts, créations & technologies, industries culturelles', title:'Arts, créations & technologies, industries culturelles', desc:'Continuité ArTeC, création, technologies, industries culturelles', bg:'#FFF1D6', head:'#FFE2A8', border:'#D97706'},
+  {number:2, id:'Transitions numérique, écologique et économique', title:'Transitions numérique, écologique et économique', desc:'Transitions numériques, écologiques et économiques, méthodes, environnements, données', bg:'#DFF7EA', head:'#BFEED4', border:'#059669'},
+  {number:3, id:'Prendre soin : santé, langage & subjectivité, vulnérabilités et agentivités, handicap, migrations, éducation & formation', title:'Prendre soin', desc:'Santé, langage, subjectivité, vulnérabilités, agentivités, handicap, migrations, éducation', bg:'#EAF0FF', head:'#D6E2FF', border:'#2563EB'},
+  {number:4, id:'Enjeux démocratiques : citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit', title:'Enjeux démocratiques', desc:'Citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit', bg:'#F3E8FF', head:'#E9D5FF', border:'#7C3AED'}
 ];
 const ALL_TARGETS = [RESERVOIR_ID, ...EURS.map(e => e.id)];
+const TARGET_LABELS = Object.fromEntries(EURS.map(e => [e.id, `EUR ${e.number} — ${e.title}`]));
+TARGET_LABELS[RESERVOIR_ID] = RESERVOIR_ID;
+const AXES_LABO = ['MPIP','DEVSENCEA','CITU','C3U','ADN','Tous axes / transversal','À préciser'];
 const FIELDS = ['id','titre','axe_paragraphe','type_contribution','eur_cible','niveau_convergence','role_labo','masters_concernes','collegues_referents','ressources_preuves','partenaires','continuum','international','commentaire','statut','priorite','tags','date_mise_a_jour'];
 const LABELS = {
   id:'Identifiant', titre:'Titre', axe_paragraphe:'Axe Paragraphe', type_contribution:'Type de contribution', eur_cible:'EUR cible', niveau_convergence:'Niveau de convergence', role_labo:'Rôle envisagé du laboratoire', masters_concernes:'Masters concernés', collegues_referents:'Collègues référents', ressources_preuves:'Ressources / preuves', partenaires:'Partenaires', continuum:'Continuum Licence-Master / Master-Doctorat', international:'International', commentaire:'Commentaire / argumentaire', statut:'Statut', priorite:'Priorité', tags:'Tags', date_mise_a_jour:'Date de mise à jour'
 };
 const SELECTS = {
+  axe_paragraphe: AXES_LABO,
   eur_cible: ALL_TARGETS,
   niveau_convergence: ['Fort / portage possible','Contributif','Exploratoire','Vigilance'],
   statut: ['Proposé','À discuter','Validé','À arbitrer'],
@@ -475,13 +578,17 @@ const HELP = {
   score: {
     title: 'Qu’est-ce que le score ?',
     html: `<p>Le score est un indicateur de lecture rapide, pas une évaluation scientifique. Il traduit le niveau de convergence sélectionné pour chaque carte :</p><ul><li><strong>Fort / portage possible</strong> = 3</li><li><strong>Contributif</strong> = 2</li><li><strong>Exploratoire</strong> = 1</li><li><strong>Vigilance</strong> = 0</li></ul><p>Le score moyen affiché dans chaque EUR correspond à la moyenne des cartes placées dans cette EUR. Il sert à repérer les convergences fortes, les zones exploratoires et les arbitrages à discuter collectivement.</p>`
+  },
+  formats: {
+    title: 'À quoi servent le CSV et le JSON ?',
+    html: `<p><strong>CSV</strong> : format tabulaire à utiliser pour partager la matrice avec les collègues, l’ouvrir dans Excel, LibreOffice ou Google Sheets, faire des corrections collectives, puis réimporter les cartes dans l’interface.</p><p><strong>JSON</strong> : format de sauvegarde plus complet pour conserver l’état de l’interface et le réimporter sans ambiguïté. Il est préférable pour archiver une version de travail ou passer d’un ordinateur à un autre.</p><p>En pratique : utilisez le CSV pour la discussion et l’édition collective ; utilisez le JSON pour la sauvegarde fidèle de l’interface.</p>`
   }
 };
 const DEMO = [
   {
     "id": "C001",
     "titre": "Carte exemple — recherche-création, arts et technologies",
-    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "axe_paragraphe": "ADN",
     "type_contribution": "Projet scientifique / axe de recherche",
     "eur_cible": "Arts, créations & technologies, industries culturelles",
     "niveau_convergence": "Fort / portage possible",
@@ -501,7 +608,7 @@ const DEMO = [
   {
     "id": "C002",
     "titre": "Carte exemple — transitions numériques et écologiques",
-    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "axe_paragraphe": "CITU",
     "type_contribution": "Méthodes / terrains / données",
     "eur_cible": "Transitions numérique, écologique et économique",
     "niveau_convergence": "Contributif",
@@ -521,7 +628,7 @@ const DEMO = [
   {
     "id": "C003",
     "titre": "Carte exemple — vulnérabilités, subjectivités, langage",
-    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "axe_paragraphe": "DEVSENCEA",
     "type_contribution": "Formation / continuum",
     "eur_cible": "Prendre soin : santé, langage & subjectivité, vulnérabilités et agentivités, handicap, migrations, éducation & formation",
     "niveau_convergence": "Exploratoire",
@@ -541,7 +648,7 @@ const DEMO = [
   {
     "id": "C004",
     "titre": "Carte exemple — enjeux démocratiques et politiques publiques",
-    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "axe_paragraphe": "MPIP",
     "type_contribution": "Partenariat / débat public",
     "eur_cible": "Enjeux démocratiques : citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit",
     "niveau_convergence": "Contributif",
@@ -561,7 +668,7 @@ const DEMO = [
   {
     "id": "C005",
     "titre": "Carte exemple — point de vigilance transversal",
-    "axe_paragraphe": "Tous axes",
+    "axe_paragraphe": "Tous axes / transversal",
     "type_contribution": "Point de vigilance / arbitrage",
     "eur_cible": "À classer",
     "niveau_convergence": "Vigilance",
@@ -584,6 +691,14 @@ let editingId = null;
 
 function loadState(){
   try {
+    const savedV6 = localStorage.getItem('paragraphe_eur_cards_v6');
+    if(savedV6) return normalizeCards(JSON.parse(savedV6));
+    const savedV5 = localStorage.getItem('paragraphe_eur_cards_v5');
+    if(savedV5) return normalizeCards(JSON.parse(savedV5));
+    const savedV4 = localStorage.getItem('paragraphe_eur_cards_v4');
+    if(savedV4) return normalizeCards(JSON.parse(savedV4));
+    const savedV3 = localStorage.getItem('paragraphe_eur_cards_v3');
+    if(savedV3) return normalizeCards(JSON.parse(savedV3));
     const savedV2 = localStorage.getItem('paragraphe_eur_cards_v2');
     if(savedV2) return normalizeCards(JSON.parse(savedV2));
     const savedV1 = localStorage.getItem('paragraphe_eur_cards_v1');
@@ -597,6 +712,7 @@ function normalizeCards(list){
     const c = {};
     FIELDS.forEach(f => c[f] = raw && raw[f] != null ? String(raw[f]) : '');
     if(!c.id) c.id = uid();
+    if(!c.axe_paragraphe) c.axe_paragraphe = 'À préciser';
     if(!ALL_TARGETS.includes(c.eur_cible)) c.eur_cible = RESERVOIR_ID;
     if(!c.niveau_convergence) c.niveau_convergence = 'Exploratoire';
     if(!c.statut) c.statut = 'Proposé';
@@ -605,29 +721,34 @@ function normalizeCards(list){
     return c;
   });
 }
-function saveState(){ localStorage.setItem('paragraphe_eur_cards_v2', JSON.stringify(cards)); }
+function saveState(){ localStorage.setItem('paragraphe_eur_cards_v6', JSON.stringify(cards)); }
 function uid(){ return 'C' + Math.random().toString(36).slice(2,8).toUpperCase(); }
 function today(){ return new Date().toISOString().slice(0,10); }
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 function convergenceScore(level){ if((level||'').startsWith('Fort')) return 3; if((level||'').startsWith('Contributif')) return 2; if((level||'').startsWith('Exploratoire')) return 1; return 0; }
 function levelClass(level){ if((level||'').startsWith('Fort')) return 'level-strong'; if((level||'').startsWith('Contributif')) return 'level-mid'; if((level||'').startsWith('Exploratoire')) return 'level-low'; return 'level-watch'; }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
-function filtersActive(){ return Boolean(document.getElementById('search').value || document.getElementById('filterLevel').value || document.getElementById('filterStatus').value); }
+function filtersActive(){ return Boolean(document.getElementById('search').value || document.getElementById('filterAxe').value || document.getElementById('filterLevel').value || document.getElementById('filterStatus').value); }
 function filteredCards(){
   const q = norm(document.getElementById('search').value);
+  const axis = document.getElementById('filterAxe').value;
   const level = document.getElementById('filterLevel').value;
   const status = document.getElementById('filterStatus').value;
   return cards.filter(c => {
     const hay = norm(Object.values(c).join(' '));
-    return (!q || hay.includes(q)) && (!level || c.niveau_convergence === level) && (!status || c.statut === status);
+    return (!q || hay.includes(q)) && (!axis || c.axe_paragraphe === axis) && (!level || c.niveau_convergence === level) && (!status || c.statut === status);
   });
 }
 function refreshSelectFilters(){
+  const axisSel = document.getElementById('filterAxe');
   const levelSel = document.getElementById('filterLevel');
   const statusSel = document.getElementById('filterStatus');
-  const currentLevel = levelSel.value, currentStatus = statusSel.value;
+  const currentAxis = axisSel.value, currentLevel = levelSel.value, currentStatus = statusSel.value;
+  const axes = uniqueList([...AXES_LABO, ...cards.map(c => c.axe_paragraphe).filter(Boolean)]);
+  axisSel.innerHTML = '<option value="">Tous axes</option>' + axes.map(v=>`<option>${esc(v)}</option>`).join('');
   levelSel.innerHTML = '<option value="">Tous niveaux</option>' + SELECTS.niveau_convergence.map(v=>`<option>${esc(v)}</option>`).join('');
   statusSel.innerHTML = '<option value="">Tous statuts</option>' + SELECTS.statut.map(v=>`<option>${esc(v)}</option>`).join('');
+  axisSel.value = axes.includes(currentAxis) ? currentAxis : '';
   levelSel.value = currentLevel; statusSel.value = currentStatus;
 }
 function render(){
@@ -661,7 +782,10 @@ function renderBoard(fc){
     const filteredNote = filtersActive() && visibleHere.length !== allHere.length ? ` · ${visibleHere.length} affichée${visibleHere.length > 1 ? 's' : ''}` : '';
     const col = document.createElement('section');
     col.className = 'eur-column';
-    col.innerHTML = `<div class="colhead"><div class="coltitle">${esc(eur.title)}</div><div class="coldesc">${esc(eur.desc)}</div><div class="colmeta">${allHere.length} carte${allHere.length > 1 ? 's' : ''} · score moyen : ${avg}${filteredNote}</div></div><div class="dropzone" data-eur="${escAttr(eur.id)}"></div>`;
+    col.style.setProperty('--eur-bg', eur.bg);
+    col.style.setProperty('--eur-head', eur.head);
+    col.style.setProperty('--eur-border', eur.border);
+    col.innerHTML = `<div class="colhead"><div class="coltitle"><span class="eur-badge">EUR ${eur.number}</span><span>${esc(eur.title)}</span></div><div class="coldesc">${esc(eur.desc)}</div><div class="colmeta">${allHere.length} carte${allHere.length > 1 ? 's' : ''} · score moyen : ${avg}${filteredNote}</div></div><div class="dropzone" data-eur="${escAttr(eur.id)}"></div>`;
     const dz = col.querySelector('.dropzone');
     setupDropzone(dz, eur.id);
     if(!visibleHere.length) dz.innerHTML = '<div class="empty">Déposer une carte ici</div>';
@@ -682,7 +806,11 @@ function setupDropzone(el, eur){
 function cardEl(c, placement){
   const simple = placement === 'reservoir';
   const el = document.createElement('article');
-  el.className = simple ? 'card reservoir-card' : 'card';
+  el.className = simple ? 'card reservoir-card' : 'card eur-card';
+  if(!simple){
+    const eurForCard = EURS.find(e => e.id === c.eur_cible);
+    if(eurForCard) el.style.setProperty('--card-border', eurForCard.border);
+  }
   el.draggable = true;
   el.dataset.id = c.id;
   el.addEventListener('dragstart', ev => ev.dataTransfer.setData('text/plain', c.id));
@@ -716,7 +844,12 @@ function openEditor(id){
     const div = document.createElement('div'); div.className = ['commentaire','ressources_preuves','masters_concernes','partenaires','continuum','international'].includes(f) ? 'field full' : 'field';
     const label = document.createElement('label'); label.textContent = LABELS[f] || f; div.appendChild(label);
     let input;
-    if(SELECTS[f]) { input = document.createElement('select'); SELECTS[f].forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=v; input.appendChild(o); }); }
+    if(SELECTS[f]) {
+      input = document.createElement('select');
+      const values = SELECTS[f].slice();
+      if(c[f] && !values.includes(c[f])) values.unshift(c[f]);
+      values.forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=(f === 'eur_cible' ? (TARGET_LABELS[v] || v) : v); input.appendChild(o); });
+    }
     else if(['commentaire','ressources_preuves','partenaires','continuum','international','masters_concernes'].includes(f)) { input = document.createElement('textarea'); }
     else { input = document.createElement('input'); input.type = f==='date_mise_a_jour' ? 'date' : 'text'; }
     input.name = f; input.value = c[f] || ''; if(f==='id') input.readOnly = true; div.appendChild(input); body.appendChild(div);
@@ -734,7 +867,8 @@ function saveEditor(ev){
 }
 function addCard(){
   const c = Object.fromEntries(FIELDS.map(f=>[f,'']));
-  c.id=uid(); c.titre='Nouvelle carte'; c.eur_cible=RESERVOIR_ID; c.niveau_convergence='Exploratoire'; c.statut='Proposé'; c.priorite='Moyenne'; c.date_mise_a_jour=today();
+  const selectedAxis = document.getElementById('filterAxe') ? document.getElementById('filterAxe').value : '';
+  c.id=uid(); c.titre='Nouvelle carte'; c.axe_paragraphe=selectedAxis || 'À préciser'; c.eur_cible=RESERVOIR_ID; c.niveau_convergence='Exploratoire'; c.statut='Proposé'; c.priorite='Moyenne'; c.date_mise_a_jour=today();
   cards.push(c); saveState(); render(); openEditor(c.id);
 }
 function deleteEditing(){
@@ -743,12 +877,13 @@ function deleteEditing(){
 }
 function clearFilters(){
   document.getElementById('search').value = '';
+  document.getElementById('filterAxe').value = '';
   document.getElementById('filterLevel').value = '';
   document.getElementById('filterStatus').value = '';
   render();
 }
 function exportCSV(){ downloadFile('eur_positionnement_export.csv', toCSV(cards), 'text/csv;charset=utf-8'); }
-function exportJSON(){ downloadFile('eur_positionnement_export.json', JSON.stringify({version:'1.1', exported_at:new Date().toISOString(), reservoir_value: RESERVOIR_ID, cards}, null, 2), 'application/json;charset=utf-8'); }
+function exportJSON(){ downloadFile('eur_positionnement_export.json', JSON.stringify({version:'1.5', exported_at:new Date().toISOString(), reservoir_value: RESERVOIR_ID, axes_labo: AXES_LABO, cards}, null, 2), 'application/json;charset=utf-8'); }
 function downloadFile(name, content, type){ const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
 function toCSV(rows){
   const lines=[FIELDS.join(',')];
@@ -783,6 +918,10 @@ function openHelp(key){
   document.getElementById('helpContent').innerHTML = item.html;
   document.getElementById('helpDialog').showModal();
 }
+function uniqueList(values){
+  const seen = new Set();
+  return values.filter(v => { const key = String(v || '').trim(); if(!key || seen.has(key)) return false; seen.add(key); return true; });
+}
 function esc(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
 function trunc(s,n){ s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; }
@@ -795,6 +934,7 @@ document.getElementById('clearFilters').addEventListener('click', clearFilters);
 document.getElementById('csvInput').addEventListener('change', e => e.target.files[0] && importCSVFile(e.target.files[0]));
 document.getElementById('jsonInput').addEventListener('change', e => e.target.files[0] && importJSONFile(e.target.files[0]));
 document.getElementById('search').addEventListener('input', render);
+document.getElementById('filterAxe').addEventListener('change', render);
 document.getElementById('filterLevel').addEventListener('change', render);
 document.getElementById('filterStatus').addEventListener('change', render);
 document.getElementById('editorForm').addEventListener('submit', saveEditor);
