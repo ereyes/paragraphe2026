@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Laboratoire Paragraphe — Positionnement Paragraphe × EUR</title>
+  <style>
+    :root {
+      --bg: #EE474F;
+      --button: #C01616;
+      --button-hover: #9f1111;
+      --black: #000000;
+      --panel: #ffffff;
+      --panel-soft: #fff6f6;
+      --ink: #121212;
+      --muted: #6b3e3e;
+      --line: rgba(18,18,18,.12);
+      --shadow: 0 16px 40px rgba(0,0,0,.16);
+      --radius: 18px;
+      --ok: #047857;
+      --warn: #a16207;
+      --info: #1d4ed8;
+      --danger: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .topbar {
+      background: var(--black);
+      color: #fff;
+      padding: 18px 26px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 8px 24px rgba(0,0,0,.22);
+    }
+    .brand {
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: .02em;
+    }
+    .top-subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+      text-align: right;
+      line-height: 1.35;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      min-height: calc(100vh - 72px);
+    }
+    .sidebar, .board-head, .eur-column {
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 108px);
+      min-height: 620px;
+      position: sticky;
+      top: 90px;
+      overflow: hidden;
+    }
+    .sidebar-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: var(--panel);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 6px; font-size: 22px; letter-spacing: -.02em; line-height: 1.15; }
+    h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -.02em; }
+    .hint { color: var(--muted); font-size: 13px; line-height: 1.42; margin-bottom: 0; }
+    .count-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      padding: 3px 8px;
+      margin-left: 6px;
+      border-radius: 999px;
+      background: var(--button);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      vertical-align: 2px;
+    }
+    .controls {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .fieldline { display: flex; flex-direction: column; gap: 5px; }
+    .fieldline label, .field-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .01em;
+    }
+    .inline-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field-with-help { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8px; }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 11px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--button); box-shadow: 0 0 0 3px rgba(192,22,22,.14); }
+    textarea { min-height: 82px; resize: vertical; }
+    button, .filebtn {
+      border: 1px solid var(--button);
+      background: var(--button);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+      line-height: 1;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(192,22,22,.18);
+    }
+    button:hover, .filebtn:hover { background: var(--button-hover); border-color: var(--button-hover); }
+    button.secondary, .filebtn.secondary {
+      background: #fff;
+      color: var(--button);
+      box-shadow: none;
+    }
+    button.secondary:hover, .filebtn.secondary:hover { background: #fff0f0; color: var(--button-hover); }
+    button.help-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      background: var(--black);
+      border-color: var(--black);
+      color: #fff;
+      box-shadow: none;
+      flex: 0 0 auto;
+    }
+    button.help-btn:hover { background: #333; border-color: #333; }
+    button.tiny {
+      padding: 7px 8px;
+      font-size: 12px;
+      border-radius: 10px;
+      font-weight: 750;
+    }
+    input[type="file"] { display: none; }
+    .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .reservoir-list {
+      flex: 1;
+      overflow: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #fff;
+    }
+    .reservoir-list.dragover, .dropzone.dragover {
+      outline: 3px dashed var(--button);
+      outline-offset: -9px;
+      background: #fff2f2;
+    }
+    .board {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .board-head {
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+    }
+    .board-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .eur-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(280px, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+    .eur-column {
+      min-height: 380px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .colhead {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .coltitle {
+      font-weight: 850;
+      line-height: 1.2;
+      margin-bottom: 7px;
+    }
+    .coldesc, .colmeta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .colmeta { margin-top: 7px; font-weight: 760; }
+    .dropzone {
+      flex: 1;
+      min-height: 300px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #fffafa;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--button);
+      border-radius: 15px;
+      padding: 11px 12px 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,.08);
+      cursor: grab;
+    }
+    .card:active { cursor: grabbing; }
+    .card h3 { margin: 0; font-size: 14px; line-height: 1.28; }
+    .card .meta { margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .card .extra { margin: 7px 0 0; color: #3f2f2f; font-size: 12px; line-height: 1.35; }
+    .reservoir-card .extra { display: none; }
+    .chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 9px; }
+    .chip {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 4px 7px;
+      background: #f3f4f6;
+      color: #374151;
+      font-weight: 700;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .chip.level-strong { background: #dcfce7; color: var(--ok); }
+    .chip.level-mid { background: #fef3c7; color: var(--warn); }
+    .chip.level-low { background: #dbeafe; color: var(--info); }
+    .chip.level-watch { background: #fee2e2; color: var(--danger); }
+    .card-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .empty {
+      color: var(--muted);
+      border: 1px dashed rgba(192,22,22,.35);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.4;
+      background: rgba(255,255,255,.72);
+    }
+    dialog {
+      border: 0;
+      border-radius: 20px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.35);
+      max-width: 920px;
+      width: min(920px, calc(100vw - 32px));
+      padding: 0;
+      color: var(--ink);
+    }
+    dialog::backdrop { background: rgba(0,0,0,.45); }
+    .modal-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+    }
+    .modal-head h2 { margin: 0; font-size: 19px; }
+    .modal-body {
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      background: #fffafa;
+      max-height: min(70vh, 720px);
+      overflow: auto;
+    }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: 12px; color: var(--muted); font-weight: 750; }
+    .modal-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+      border-radius: 0 0 20px 20px;
+    }
+    .smallnote { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .help-content { padding: 18px 20px 20px; line-height: 1.55; background: #fffafa; }
+    .help-content p { margin-bottom: 10px; }
+    .help-content ul { margin: 8px 0 0; padding-left: 20px; }
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; }
+    @media (min-width: 1550px) {
+      .eur-grid { grid-template-columns: repeat(4, minmax(260px, 1fr)); }
+    }
+    @media (max-width: 1050px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; max-height: none; min-height: 0; }
+      .reservoir-list { max-height: 420px; }
+      .eur-grid { grid-template-columns: 1fr; }
+      .topbar { position: static; }
+    }
+    @media (max-width: 680px) {
+      .topbar, .board-head, .modal-foot { flex-direction: column; align-items: stretch; }
+      .top-subtitle { text-align: left; }
+      .app { padding: 12px; }
+      .inline-controls, .button-grid { grid-template-columns: 1fr; }
+      .modal-body { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Laboratoire Paragraphe</div>
+    <div class="top-subtitle">Matrice active de positionnement des axes dans les EUR<br>glisser-déposer, édition, export CSV / JSON</div>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar" aria-label="Réservoir et contrôles">
+      <div class="sidebar-head">
+        <div>
+          <h1>Réservoir des cartes <span class="count-pill" id="reservoirCount">0</span></h1>
+          <p class="hint">Cartes non encore positionnées dans une EUR. Déposer une carte ici pour la remettre à arbitrer.</p>
+        </div>
+        <button class="help-btn" type="button" data-help="carte" aria-label="Qu’est-ce qu’une carte ?">?</button>
+      </div>
+
+      <section class="controls" aria-label="Contrôles">
+        <div class="fieldline">
+          <label for="search">Filtrer</label>
+          <input type="search" id="search" placeholder="Axe, titre, collègue, master, tag…" />
+        </div>
+
+        <div class="inline-controls">
+          <div class="fieldline">
+            <label for="filterLevel">Niveaux</label>
+            <select id="filterLevel"><option value="">Tous niveaux</option></select>
+          </div>
+          <div class="field-with-help">
+            <div class="fieldline">
+              <label for="filterStatus">Statuts</label>
+              <select id="filterStatus"><option value="">Tous statuts</option></select>
+            </div>
+            <button class="help-btn" type="button" data-help="score" aria-label="Qu’est-ce que le score ?">?</button>
+          </div>
+        </div>
+
+        <button class="primary" id="addCard" type="button">+ Nouvelle carte</button>
+
+        <div class="button-grid">
+          <label class="filebtn secondary" for="csvInput">Importer CSV</label><input id="csvInput" type="file" accept=".csv,text/csv" />
+          <label class="filebtn secondary" for="jsonInput">Importer JSON</label><input id="jsonInput" type="file" accept=".json,application/json" />
+          <button id="exportCsv" type="button">Exporter CSV</button>
+          <button id="exportJson" type="button">Exporter JSON</button>
+        </div>
+        <button class="secondary" id="resetDemo" type="button">Réinitialiser l’exemple</button>
+      </section>
+
+      <section class="reservoir-list" id="reservoirList" aria-label="Réservoir des cartes"></section>
+    </aside>
+
+    <main class="board" aria-label="Positionnement dans les EUR">
+      <section class="board-head">
+        <div>
+          <h2>Positionnement dans les 4 EUR</h2>
+          <p class="hint">Glissez les cartes depuis le réservoir vers une EUR. Pour une même contribution dans plusieurs EUR, dupliquez la carte puis positionnez la copie.</p>
+        </div>
+        <div class="board-tools">
+          <button class="secondary" id="clearFilters" type="button">Réinitialiser les filtres</button>
+          <button class="help-btn" type="button" data-help="score" aria-label="Qu’est-ce que le score ?">?</button>
+        </div>
+      </section>
+      <section class="eur-grid" id="board"></section>
+    </main>
+  </div>
+
+  <dialog id="editor">
+    <form method="dialog" id="editorForm">
+      <div class="modal-head"><h2 id="editorTitle">Éditer une carte</h2><button class="secondary" value="cancel" type="button" id="closeEditor">Fermer</button></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-foot">
+        <div class="smallnote">Les commentaires sont conservés dans l’éditeur et dans les exports, mais masqués dans le réservoir pour alléger la lecture.</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="secondary" type="button" id="deleteCard">Supprimer</button><button type="submit">Enregistrer</button></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="helpDialog">
+    <div class="modal-head"><h2 id="helpTitle">Aide</h2><button class="secondary" type="button" id="closeHelp">Fermer</button></div>
+    <div class="help-content" id="helpContent"></div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const RESERVOIR_ID = 'À classer';
+const EURS = [
+  {id:'Arts, créations & technologies, industries culturelles', title:'Arts, créations & technologies, industries culturelles', desc:'Continuité ArTeC, création, technologies, industries culturelles'},
+  {id:'Transitions numérique, écologique et économique', title:'Transitions numérique, écologique et économique', desc:'Transitions numériques, écologiques et économiques, méthodes, environnements, données'},
+  {id:'Prendre soin : santé, langage & subjectivité, vulnérabilités et agentivités, handicap, migrations, éducation & formation', title:'Prendre soin', desc:'Santé, langage, subjectivité, vulnérabilités, agentivités, handicap, migrations, éducation'},
+  {id:'Enjeux démocratiques : citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit', title:'Enjeux démocratiques', desc:'Citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit'}
+];
+const ALL_TARGETS = [RESERVOIR_ID, ...EURS.map(e => e.id)];
+const FIELDS = ['id','titre','axe_paragraphe','type_contribution','eur_cible','niveau_convergence','role_labo','masters_concernes','collegues_referents','ressources_preuves','partenaires','continuum','international','commentaire','statut','priorite','tags','date_mise_a_jour'];
+const LABELS = {
+  id:'Identifiant', titre:'Titre', axe_paragraphe:'Axe Paragraphe', type_contribution:'Type de contribution', eur_cible:'EUR cible', niveau_convergence:'Niveau de convergence', role_labo:'Rôle envisagé du laboratoire', masters_concernes:'Masters concernés', collegues_referents:'Collègues référents', ressources_preuves:'Ressources / preuves', partenaires:'Partenaires', continuum:'Continuum Licence-Master / Master-Doctorat', international:'International', commentaire:'Commentaire / argumentaire', statut:'Statut', priorite:'Priorité', tags:'Tags', date_mise_a_jour:'Date de mise à jour'
+};
+const SELECTS = {
+  eur_cible: ALL_TARGETS,
+  niveau_convergence: ['Fort / portage possible','Contributif','Exploratoire','Vigilance'],
+  statut: ['Proposé','À discuter','Validé','À arbitrer'],
+  priorite: ['Haute','Moyenne','Basse']
+};
+const HELP = {
+  carte: {
+    title: 'Qu’est-ce qu’une carte ?',
+    html: `<p>Une carte est un argument de positionnement du laboratoire vers une EUR. Elle peut désigner un objet de recherche, une méthode, un terrain, une formation, un séminaire, un projet, un partenariat, une dimension internationale ou un point de vigilance.</p><p>Principe pratique : <strong>une carte = une contribution objectivable</strong>. Si la même contribution concerne plusieurs EUR, dupliquez la carte puis placez chaque copie dans l’EUR concernée.</p>`
+  },
+  score: {
+    title: 'Qu’est-ce que le score ?',
+    html: `<p>Le score est un indicateur de lecture rapide, pas une évaluation scientifique. Il traduit le niveau de convergence sélectionné pour chaque carte :</p><ul><li><strong>Fort / portage possible</strong> = 3</li><li><strong>Contributif</strong> = 2</li><li><strong>Exploratoire</strong> = 1</li><li><strong>Vigilance</strong> = 0</li></ul><p>Le score moyen affiché dans chaque EUR correspond à la moyenne des cartes placées dans cette EUR. Il sert à repérer les convergences fortes, les zones exploratoires et les arbitrages à discuter collectivement.</p>`
+  }
+};
+const DEMO = [
+  {
+    "id": "C001",
+    "titre": "Carte exemple — recherche-création, arts et technologies",
+    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "type_contribution": "Projet scientifique / axe de recherche",
+    "eur_cible": "Arts, créations & technologies, industries culturelles",
+    "niveau_convergence": "Fort / portage possible",
+    "role_labo": "Contributeur ou pilote à discuter",
+    "masters_concernes": "Masters concernés à renseigner",
+    "collegues_referents": "Collègues à renseigner",
+    "ressources_preuves": "Projets, séminaires, publications ou plateformes à documenter",
+    "partenaires": "Partenaires académiques, publics ou socio-économiques à renseigner",
+    "continuum": "Master-Doctorat ; Licence-Master à préciser",
+    "international": "Mobilités ou partenariats internationaux à préciser",
+    "commentaire": "Exemple de carte à remplacer : utiliser une carte par argument de positionnement.",
+    "statut": "Proposé",
+    "priorite": "Haute",
+    "tags": "arts;technologies;création;ArTeC",
+    "date_mise_a_jour": "2026-05-14"
+  },
+  {
+    "id": "C002",
+    "titre": "Carte exemple — transitions numériques et écologiques",
+    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "type_contribution": "Méthodes / terrains / données",
+    "eur_cible": "Transitions numérique, écologique et économique",
+    "niveau_convergence": "Contributif",
+    "role_labo": "Contributeur",
+    "masters_concernes": "Masters concernés à renseigner",
+    "collegues_referents": "Collègues à renseigner",
+    "ressources_preuves": "Dispositifs numériques, corpus, enquêtes ou prototypes à documenter",
+    "partenaires": "Partenaires à renseigner",
+    "continuum": "Actions pédagogiques à préciser",
+    "international": "À préciser",
+    "commentaire": "Positionnement possible si l’axe apporte des méthodes, outils ou terrains sur les transitions.",
+    "statut": "À discuter",
+    "priorite": "Moyenne",
+    "tags": "numérique;transition;écologie;données",
+    "date_mise_a_jour": "2026-05-14"
+  },
+  {
+    "id": "C003",
+    "titre": "Carte exemple — vulnérabilités, subjectivités, langage",
+    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "type_contribution": "Formation / continuum",
+    "eur_cible": "Prendre soin : santé, langage & subjectivité, vulnérabilités et agentivités, handicap, migrations, éducation & formation",
+    "niveau_convergence": "Exploratoire",
+    "role_labo": "Veille / contribution ponctuelle",
+    "masters_concernes": "Masters concernés à renseigner",
+    "collegues_referents": "Collègues à renseigner",
+    "ressources_preuves": "Terrains, séminaires ou enseignements à documenter",
+    "partenaires": "Partenaires à renseigner",
+    "continuum": "Licence-Master et Master-Doctorat à discuter",
+    "international": "À préciser",
+    "commentaire": "À utiliser pour signaler une convergence partielle sans sur-positionner le laboratoire.",
+    "statut": "Proposé",
+    "priorite": "Basse",
+    "tags": "care;vulnérabilités;langage;formation",
+    "date_mise_a_jour": "2026-05-14"
+  },
+  {
+    "id": "C004",
+    "titre": "Carte exemple — enjeux démocratiques et politiques publiques",
+    "axe_paragraphe": "Axe Paragraphe à préciser",
+    "type_contribution": "Partenariat / débat public",
+    "eur_cible": "Enjeux démocratiques : citoyenneté, politiques publiques, alternatives démocratiques, risques géopolitiques, mutations du droit",
+    "niveau_convergence": "Contributif",
+    "role_labo": "Contributeur",
+    "masters_concernes": "Masters concernés à renseigner",
+    "collegues_referents": "Collègues à renseigner",
+    "ressources_preuves": "Recherches, expertises, ateliers ou publications à documenter",
+    "partenaires": "Partenaires publics ou socio-économiques à renseigner",
+    "continuum": "À préciser",
+    "international": "À préciser",
+    "commentaire": "Carte exemple pour faire apparaître les apports du laboratoire sur les controverses, médias, citoyenneté ou décision publique.",
+    "statut": "À discuter",
+    "priorite": "Moyenne",
+    "tags": "démocratie;citoyenneté;politique publique;controverse",
+    "date_mise_a_jour": "2026-05-14"
+  },
+  {
+    "id": "C005",
+    "titre": "Carte exemple — point de vigilance transversal",
+    "axe_paragraphe": "Tous axes",
+    "type_contribution": "Point de vigilance / arbitrage",
+    "eur_cible": "À classer",
+    "niveau_convergence": "Vigilance",
+    "role_labo": "Arbitrage collectif",
+    "masters_concernes": "À renseigner",
+    "collegues_referents": "À renseigner",
+    "ressources_preuves": "Éléments à documenter",
+    "partenaires": "À renseigner",
+    "continuum": "À renseigner",
+    "international": "À renseigner",
+    "commentaire": "Exemple de carte non encore positionnée : à glisser dans une EUR ou à conserver comme point transversal.",
+    "statut": "À arbitrer",
+    "priorite": "Haute",
+    "tags": "vigilance;transversal;coordination",
+    "date_mise_a_jour": "2026-05-14"
+  }
+];
+let cards = loadState();
+let editingId = null;
+
+function loadState(){
+  try {
+    const savedV2 = localStorage.getItem('paragraphe_eur_cards_v2');
+    if(savedV2) return normalizeCards(JSON.parse(savedV2));
+    const savedV1 = localStorage.getItem('paragraphe_eur_cards_v1');
+    if(savedV1) return normalizeCards(JSON.parse(savedV1));
+  } catch(e) {}
+  return normalizeCards(DEMO.map(x => ({...x})));
+}
+function normalizeCards(list){
+  if(!Array.isArray(list)) return DEMO.map(x => ({...x}));
+  return list.map(raw => {
+    const c = {};
+    FIELDS.forEach(f => c[f] = raw && raw[f] != null ? String(raw[f]) : '');
+    if(!c.id) c.id = uid();
+    if(!ALL_TARGETS.includes(c.eur_cible)) c.eur_cible = RESERVOIR_ID;
+    if(!c.niveau_convergence) c.niveau_convergence = 'Exploratoire';
+    if(!c.statut) c.statut = 'Proposé';
+    if(!c.priorite) c.priorite = 'Moyenne';
+    if(!c.date_mise_a_jour) c.date_mise_a_jour = today();
+    return c;
+  });
+}
+function saveState(){ localStorage.setItem('paragraphe_eur_cards_v2', JSON.stringify(cards)); }
+function uid(){ return 'C' + Math.random().toString(36).slice(2,8).toUpperCase(); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function convergenceScore(level){ if((level||'').startsWith('Fort')) return 3; if((level||'').startsWith('Contributif')) return 2; if((level||'').startsWith('Exploratoire')) return 1; return 0; }
+function levelClass(level){ if((level||'').startsWith('Fort')) return 'level-strong'; if((level||'').startsWith('Contributif')) return 'level-mid'; if((level||'').startsWith('Exploratoire')) return 'level-low'; return 'level-watch'; }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+function filtersActive(){ return Boolean(document.getElementById('search').value || document.getElementById('filterLevel').value || document.getElementById('filterStatus').value); }
+function filteredCards(){
+  const q = norm(document.getElementById('search').value);
+  const level = document.getElementById('filterLevel').value;
+  const status = document.getElementById('filterStatus').value;
+  return cards.filter(c => {
+    const hay = norm(Object.values(c).join(' '));
+    return (!q || hay.includes(q)) && (!level || c.niveau_convergence === level) && (!status || c.statut === status);
+  });
+}
+function refreshSelectFilters(){
+  const levelSel = document.getElementById('filterLevel');
+  const statusSel = document.getElementById('filterStatus');
+  const currentLevel = levelSel.value, currentStatus = statusSel.value;
+  levelSel.innerHTML = '<option value="">Tous niveaux</option>' + SELECTS.niveau_convergence.map(v=>`<option>${esc(v)}</option>`).join('');
+  statusSel.innerHTML = '<option value="">Tous statuts</option>' + SELECTS.statut.map(v=>`<option>${esc(v)}</option>`).join('');
+  levelSel.value = currentLevel; statusSel.value = currentStatus;
+}
+function render(){
+  refreshSelectFilters();
+  const fc = filteredCards();
+  renderReservoir(fc);
+  renderBoard(fc);
+}
+function renderReservoir(fc){
+  const list = document.getElementById('reservoirList');
+  setupDropzone(list, RESERVOIR_ID);
+  const reservoirAll = cards.filter(c => (c.eur_cible || RESERVOIR_ID) === RESERVOIR_ID);
+  const reservoirVisible = fc.filter(c => (c.eur_cible || RESERVOIR_ID) === RESERVOIR_ID);
+  document.getElementById('reservoirCount').textContent = filtersActive() ? `${reservoirVisible.length}/${reservoirAll.length}` : String(reservoirAll.length);
+  list.innerHTML = '';
+  if(!reservoirVisible.length){
+    list.innerHTML = filtersActive()
+      ? '<div class="empty">Aucune carte du réservoir ne correspond aux filtres actifs.</div>'
+      : '<div class="empty">Le réservoir est vide. Déposez une carte ici pour la remettre à arbitrer.</div>';
+    return;
+  }
+  reservoirVisible.sort(sortCards).forEach(c => list.appendChild(cardEl(c, 'reservoir')));
+}
+function renderBoard(fc){
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  EURS.forEach(eur => {
+    const allHere = cards.filter(c => c.eur_cible === eur.id);
+    const visibleHere = fc.filter(c => c.eur_cible === eur.id);
+    const avg = allHere.length ? (allHere.reduce((a,c)=>a+convergenceScore(c.niveau_convergence),0)/allHere.length).toFixed(1) : '–';
+    const filteredNote = filtersActive() && visibleHere.length !== allHere.length ? ` · ${visibleHere.length} affichée${visibleHere.length > 1 ? 's' : ''}` : '';
+    const col = document.createElement('section');
+    col.className = 'eur-column';
+    col.innerHTML = `<div class="colhead"><div class="coltitle">${esc(eur.title)}</div><div class="coldesc">${esc(eur.desc)}</div><div class="colmeta">${allHere.length} carte${allHere.length > 1 ? 's' : ''} · score moyen : ${avg}${filteredNote}</div></div><div class="dropzone" data-eur="${escAttr(eur.id)}"></div>`;
+    const dz = col.querySelector('.dropzone');
+    setupDropzone(dz, eur.id);
+    if(!visibleHere.length) dz.innerHTML = '<div class="empty">Déposer une carte ici</div>';
+    visibleHere.sort(sortCards).forEach(c => dz.appendChild(cardEl(c, 'eur')));
+    board.appendChild(col);
+  });
+}
+function sortCards(a,b){
+  const s = convergenceScore(b.niveau_convergence) - convergenceScore(a.niveau_convergence);
+  if(s !== 0) return s;
+  return String(a.titre || '').localeCompare(String(b.titre || ''), 'fr');
+}
+function setupDropzone(el, eur){
+  el.ondragover = ev => { ev.preventDefault(); el.classList.add('dragover'); };
+  el.ondragleave = () => el.classList.remove('dragover');
+  el.ondrop = ev => { ev.preventDefault(); el.classList.remove('dragover'); const id=ev.dataTransfer.getData('text/plain'); moveCard(id, eur); };
+}
+function cardEl(c, placement){
+  const simple = placement === 'reservoir';
+  const el = document.createElement('article');
+  el.className = simple ? 'card reservoir-card' : 'card';
+  el.draggable = true;
+  el.dataset.id = c.id;
+  el.addEventListener('dragstart', ev => ev.dataTransfer.setData('text/plain', c.id));
+  const level = c.niveau_convergence || 'Niveau ?';
+  const extra = [c.role_labo ? `Rôle : ${c.role_labo}` : '', c.masters_concernes ? `Masters : ${c.masters_concernes}` : '', c.collegues_referents ? `Référents : ${c.collegues_referents}` : ''].filter(Boolean).join(' · ');
+  el.innerHTML = `<h3>${esc(c.titre || 'Sans titre')}</h3>
+    <p class="meta"><strong>${esc(c.axe_paragraphe || 'Axe non renseigné')}</strong><br>${esc(c.type_contribution || 'Type non renseigné')}</p>
+    <div class="chips"><span class="chip ${levelClass(level)}">${esc(level)}</span><span class="chip">score ${convergenceScore(level)}</span><span class="chip">${esc(c.statut || 'Statut ?')}</span><span class="chip">${esc(c.priorite || 'Priorité ?')}</span></div>
+    <p class="extra">${esc(trunc(extra || c.ressources_preuves || '', 170))}</p>
+    <div class="card-actions"><button class="tiny secondary" type="button" data-action="edit">Modifier</button><button class="tiny secondary" type="button" data-action="dup">Dupliquer</button></div>`;
+  el.querySelector('[data-action="edit"]').addEventListener('click', e => { e.stopPropagation(); openEditor(c.id); });
+  el.querySelector('[data-action="dup"]').addEventListener('click', e => { e.stopPropagation(); duplicateCard(c.id); });
+  el.addEventListener('dblclick', () => openEditor(c.id));
+  return el;
+}
+function moveCard(id, eur){
+  const c = cards.find(x=>x.id===id); if(!c) return;
+  c.eur_cible = eur; c.date_mise_a_jour = today(); saveState(); render(); toast(eur === RESERVOIR_ID ? 'Carte remise dans le réservoir' : 'Carte déplacée');
+}
+function duplicateCard(id){
+  const c = cards.find(x=>x.id===id); if(!c) return;
+  const copy = {...c, id: uid(), titre: (c.titre || 'Carte') + ' — copie', statut:'Proposé', date_mise_a_jour: today()};
+  cards.push(copy); saveState(); render(); toast('Carte dupliquée');
+}
+function openEditor(id){
+  editingId = id;
+  const c = cards.find(x=>x.id===id); if(!c) return;
+  document.getElementById('editorTitle').textContent = c.titre || 'Éditer une carte';
+  const body = document.getElementById('modalBody'); body.innerHTML = '';
+  FIELDS.forEach(f => {
+    const div = document.createElement('div'); div.className = ['commentaire','ressources_preuves','masters_concernes','partenaires','continuum','international'].includes(f) ? 'field full' : 'field';
+    const label = document.createElement('label'); label.textContent = LABELS[f] || f; div.appendChild(label);
+    let input;
+    if(SELECTS[f]) { input = document.createElement('select'); SELECTS[f].forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=v; input.appendChild(o); }); }
+    else if(['commentaire','ressources_preuves','partenaires','continuum','international','masters_concernes'].includes(f)) { input = document.createElement('textarea'); }
+    else { input = document.createElement('input'); input.type = f==='date_mise_a_jour' ? 'date' : 'text'; }
+    input.name = f; input.value = c[f] || ''; if(f==='id') input.readOnly = true; div.appendChild(input); body.appendChild(div);
+  });
+  document.getElementById('editor').showModal();
+}
+function saveEditor(ev){
+  ev.preventDefault();
+  const c = cards.find(x=>x.id===editingId); if(!c) return;
+  const fd = new FormData(document.getElementById('editorForm'));
+  FIELDS.forEach(f => c[f] = fd.get(f) || '');
+  if(!ALL_TARGETS.includes(c.eur_cible)) c.eur_cible = RESERVOIR_ID;
+  if(!c.date_mise_a_jour) c.date_mise_a_jour = today();
+  saveState(); document.getElementById('editor').close(); render(); toast('Carte enregistrée');
+}
+function addCard(){
+  const c = Object.fromEntries(FIELDS.map(f=>[f,'']));
+  c.id=uid(); c.titre='Nouvelle carte'; c.eur_cible=RESERVOIR_ID; c.niveau_convergence='Exploratoire'; c.statut='Proposé'; c.priorite='Moyenne'; c.date_mise_a_jour=today();
+  cards.push(c); saveState(); render(); openEditor(c.id);
+}
+function deleteEditing(){
+  if(!editingId) return;
+  cards = cards.filter(c=>c.id!==editingId); editingId=null; saveState(); document.getElementById('editor').close(); render(); toast('Carte supprimée');
+}
+function clearFilters(){
+  document.getElementById('search').value = '';
+  document.getElementById('filterLevel').value = '';
+  document.getElementById('filterStatus').value = '';
+  render();
+}
+function exportCSV(){ downloadFile('eur_positionnement_export.csv', toCSV(cards), 'text/csv;charset=utf-8'); }
+function exportJSON(){ downloadFile('eur_positionnement_export.json', JSON.stringify({version:'1.1', exported_at:new Date().toISOString(), reservoir_value: RESERVOIR_ID, cards}, null, 2), 'application/json;charset=utf-8'); }
+function downloadFile(name, content, type){ const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
+function toCSV(rows){
+  const lines=[FIELDS.join(',')];
+  rows.forEach(r => lines.push(FIELDS.map(f=>csvCell(r[f]||'')).join(',')));
+  return '\ufeff' + lines.join('\r\n');
+}
+function csvCell(v){ v=String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }
+function parseCSV(text){
+  text = text.replace(/^\ufeff/, '');
+  const rows=[]; let row=[], val='', inQ=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i], next=text[i+1];
+    if(inQ){ if(ch==='"' && next==='"'){ val+='"'; i++; } else if(ch==='"'){ inQ=false; } else val+=ch; }
+    else { if(ch==='"') inQ=true; else if(ch===','){ row.push(val); val=''; } else if(ch==='\n'){ row.push(val); rows.push(row); row=[]; val=''; } else if(ch==='\r'){} else val+=ch; }
+  }
+  row.push(val); rows.push(row);
+  const head = (rows.shift() || []).map(h=>h.trim());
+  return rows.filter(r=>r.some(x=>String(x).trim())).map(r => {
+    const obj={}; FIELDS.forEach(f=>obj[f]=''); head.forEach((h,i)=>{ if(FIELDS.includes(h)) obj[h]=r[i]||''; });
+    if(!obj.id) obj.id=uid(); if(!ALL_TARGETS.includes(obj.eur_cible)) obj.eur_cible=RESERVOIR_ID; return obj;
+  });
+}
+function importCSVFile(file){
+  const reader=new FileReader(); reader.onload=e=>{ cards=normalizeCards(parseCSV(e.target.result)); saveState(); render(); toast(cards.length+' cartes importées'); }; reader.readAsText(file, 'utf-8');
+}
+function importJSONFile(file){
+  const reader=new FileReader(); reader.onload=e=>{ const data=JSON.parse(e.target.result); cards=normalizeCards(Array.isArray(data) ? data : (data.cards || [])); saveState(); render(); toast(cards.length+' cartes importées'); }; reader.readAsText(file, 'utf-8');
+}
+function openHelp(key){
+  const item = HELP[key]; if(!item) return;
+  document.getElementById('helpTitle').textContent = item.title;
+  document.getElementById('helpContent').innerHTML = item.html;
+  document.getElementById('helpDialog').showModal();
+}
+function esc(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+function trunc(s,n){ s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; }
+
+document.getElementById('addCard').addEventListener('click', addCard);
+document.getElementById('exportCsv').addEventListener('click', exportCSV);
+document.getElementById('exportJson').addEventListener('click', exportJSON);
+document.getElementById('resetDemo').addEventListener('click', () => { cards=normalizeCards(DEMO.map(x=>({...x}))); saveState(); render(); toast('Exemple réinitialisé'); });
+document.getElementById('clearFilters').addEventListener('click', clearFilters);
+document.getElementById('csvInput').addEventListener('change', e => e.target.files[0] && importCSVFile(e.target.files[0]));
+document.getElementById('jsonInput').addEventListener('change', e => e.target.files[0] && importJSONFile(e.target.files[0]));
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('filterLevel').addEventListener('change', render);
+document.getElementById('filterStatus').addEventListener('change', render);
+document.getElementById('editorForm').addEventListener('submit', saveEditor);
+document.getElementById('closeEditor').addEventListener('click', () => document.getElementById('editor').close());
+document.getElementById('deleteCard').addEventListener('click', deleteEditing);
+document.getElementById('closeHelp').addEventListener('click', () => document.getElementById('helpDialog').close());
+document.querySelectorAll('[data-help]').forEach(btn => btn.addEventListener('click', () => openHelp(btn.dataset.help)));
+render();
+</script>
+</body>
+</html>
